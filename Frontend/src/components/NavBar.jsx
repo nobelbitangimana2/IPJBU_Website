@@ -55,8 +55,8 @@ export default function NavBar() {
 
         {/* Desktop CTA */}
         <div className="navbar__actions">
-          <Link to="/about" className="navbar__cta" onClick={close}>
-            Partenaires
+          <Link to="/news" className="navbar__cta" onClick={close}>
+            Actualités
           </Link>
         </div>
 
@@ -92,8 +92,8 @@ export default function NavBar() {
             {label}
           </NavLink>
         ))}
-        <Link to="/about" className="navbar__mobile-cta" onClick={close}>
-          Partenaires
+        <Link to="/news" className="navbar__mobile-cta" onClick={close}>
+          Actualités
         </Link>
       </nav>
     </header>
