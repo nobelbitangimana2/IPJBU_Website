@@ -5,9 +5,8 @@ import UpdateCard from '../components/UpdateCard'
 import { useData } from '../store/DataContext'
 import './Home.css'
 
-/* ── Hero slides ── */
-/* TODO: remplacer par des photos autorisées fournies par l'association */
-const SLIDES = [
+/* ── Fallbacks, used only if the media library is empty ── */
+const FALLBACK_SLIDES = [
   {
     url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80',
     alt: 'Champs agro-pastoraux au lever du soleil',
@@ -21,6 +20,7 @@ const SLIDES = [
     alt: 'Récolte agro-pastorale',
   },
 ]
+const FALLBACK_PHOTO = 'https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=900&q=80'
 
 /* ── Feature cards ── */
 const FEATURES = [
@@ -62,13 +62,24 @@ const VALUES = [
 ]
 
 export default function Home() {
-  const { updates, content } = useData()
+  const { updates, content, images } = useData()
   const [slide, setSlide] = useState(0)
 
+  // Media library images only (skip images uploaded for articles)
+  const libraryImages = (images || []).filter((i) => i.category !== 'updates')
+
+  const slides = libraryImages.length
+    ? libraryImages.slice(0, 5).map((i) => ({ url: i.url, alt: i.alt || 'Photo IPJBU' }))
+    : FALLBACK_SLIDES
+
+  // Photo for the "Nos valeurs" section: the 6th image, else the first
+  const valuesPhoto = libraryImages[5] ?? libraryImages[0]
+
   useEffect(() => {
-    const id = setInterval(() => setSlide(s => (s + 1) % SLIDES.length), 5500)
+    setSlide(0)
+    const id = setInterval(() => setSlide((s) => (s + 1) % slides.length), 5500)
     return () => clearInterval(id)
-  }, [])
+  }, [slides.length])
 
   const latest = [...updates]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -79,11 +90,13 @@ export default function Home() {
 
       {/* ══ HERO ══ */}
       <section className="hero" aria-label="Bannière principale">
-        {SLIDES.map((s, i) => (
+        {slides.map((s, i) => (
           <div
-            key={i}
+            key={s.url}
             className={`hero__bg${i === slide ? ' hero__bg--active' : ''}`}
             style={{ backgroundImage: `url(${s.url})` }}
+            role="img"
+            aria-label={s.alt}
             aria-hidden={i !== slide}
           />
         ))}
@@ -107,7 +120,7 @@ export default function Home() {
         </div>
 
         <div className="hero__dots">
-          {SLIDES.map((_, i) => (
+          {slides.map((_, i) => (
             <button
               key={i}
               className={`hero__dot${i === slide ? ' hero__dot--active' : ''}`}
@@ -152,10 +165,9 @@ export default function Home() {
               <Button to="/about" variant="outline">En savoir plus</Button>
             </div>
             <div className="commitment__photo-wrap">
-              {/* TODO: remplacer par une photo autorisée fournie par l'association */}
               <img
-                src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=900&q=80"
-                alt="Jeunes bénéficiaires travaillant ensemble sur un projet agro-pastoral"
+                src={valuesPhoto?.url ?? FALLBACK_PHOTO}
+                alt={valuesPhoto?.alt || 'Bénéficiaires de l’IPJBU'}
                 className="commitment__photo"
                 loading="lazy"
               />
@@ -194,6 +206,7 @@ export default function Home() {
         </section>
       )}
 
+      {/* ══ PARTENAIRES ══ */}
       {(content.partners || []).length > 0 && (
         <section className="home-partners section--cream" aria-label="Nos partenaires">
           <div className="container">
@@ -204,15 +217,15 @@ export default function Home() {
             <div className="home-partners__grid">
               {content.partners.map((entry, index) => {
                 const partner = typeof entry === 'string' ? { name: entry } : entry
-                const content = partner.logoUrl
+                const inner = partner.logoUrl
                   ? <img src={partner.logoUrl} alt={partner.name} loading="lazy" />
                   : <span>{partner.name}</span>
                 return partner.websiteUrl ? (
                   <a key={`${partner.name}-${index}`} href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="home-partners__item">
-                    {content}
+                    {inner}
                   </a>
                 ) : (
-                  <div key={`${partner.name}-${index}`} className="home-partners__item">{content}</div>
+                  <div key={`${partner.name}-${index}`} className="home-partners__item">{inner}</div>
                 )
               })}
             </div>
