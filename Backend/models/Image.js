@@ -9,7 +9,7 @@ const imageSchema = new mongoose.Schema(
     alt:          { type: String, default: '' },
     category:     {
       type: String,
-      enum: ['farmland', 'farmers', 'activities', 'harvest', 'infrastructure', 'community', 'general'],
+      enum: ['farmland', 'farmers', 'activities', 'harvest', 'infrastructure', 'community', 'general', 'updates'],
       default: 'general',
     },
     order:               { type: Number, default: 0 },
