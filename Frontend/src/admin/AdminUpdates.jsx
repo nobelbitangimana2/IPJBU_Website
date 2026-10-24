@@ -2,11 +2,9 @@ import React, { useState } from 'react'
 import { useData } from '../store/DataContext'
 import './AdminUpdates.css'
 
-const CATEGORIES = ['agriculture', 'formation', 'partenariats', 'communauté', 'infrastructure', 'général']
-
-  const EMPTY_FORM = {
+const EMPTY_FORM = {
   title: '', date: new Date().toISOString().slice(0, 10),
-  excerpt: '', body: '', imageUrl: '', category: 'agriculture',
+  excerpt: '', body: '', blocks: [], imageUrl: '', category: 'général',
 }
 
 function validate(f) {
@@ -14,7 +12,10 @@ function validate(f) {
   if (!f.title.trim())   e.title   = 'Le titre est requis.'
   if (!f.date)           e.date    = 'La date est requise.'
   if (!f.excerpt.trim()) e.excerpt = 'Le résumé est requis.'
-  if (!f.body.trim())    e.body    = 'Le contenu est requis.'
+  if (!f.body.trim() && !f.blocks.length) e.body = 'Ajoutez au moins un bloc de contenu.'
+  if (f.blocks.some((block) => (
+    block.type === 'image' ? !(block.imageUrl || '').trim() : !(block.text || '').trim()
+  ))) e.body = 'Complétez ou supprimez les blocs vides.'
   return e
 }
 
@@ -33,7 +34,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
 }
 
 export default function AdminUpdates() {
-  const { updates, addUpdate, editUpdate, deleteUpdate, images } = useData()
+  const { updates, categories, addUpdate, editUpdate, deleteUpdate, images, addImage } = useData()
 
   const [view,        setView]        = useState('list')
   const [editingId,   setEditingId]   = useState(null)
@@ -44,6 +45,7 @@ export default function AdminUpdates() {
   const [toast,       setToast]       = useState(null)
   const [saving,      setSaving]      = useState(false)
   const [mediaPicker, setMediaPicker] = useState(false)
+  const [uploadingBlock, setUploadingBlock] = useState(null)
 
   const sorted = [...updates].sort((a, b) => new Date(b.date) - new Date(a.date))
 
@@ -53,11 +55,18 @@ export default function AdminUpdates() {
   }
 
   function openNew() {
-    setForm(EMPTY_FORM); setErrors({}); setTouched({}); setEditingId(null); setView('form')
+    setForm({ ...EMPTY_FORM, blocks: [], category: categories[0]?.slug || 'général' })
+    setErrors({}); setTouched({}); setEditingId(null); setView('form')
   }
 
   function openEdit(u) {
-    setForm({ title: u.title, date: u.date, excerpt: u.excerpt, body: u.body, imageUrl: u.imageUrl ?? '', category: u.category ?? 'agriculture' })
+    const blocks = u.blocks?.length
+      ? u.blocks.map((block) => ({ ...block }))
+      : (u.body || '').split('\n\n').filter(Boolean).map((text) => ({ type: 'paragraph', text, imageUrl: '', alt: '', caption: '' }))
+    setForm({
+      title: u.title, date: u.date, excerpt: u.excerpt, body: u.body || '', blocks,
+      imageUrl: u.imageUrl ?? '', category: u.category ?? 'général',
+    })
     setErrors({}); setTouched({}); setEditingId(u.id); setView('form')
   }
 
@@ -69,6 +78,46 @@ export default function AdminUpdates() {
 
   function handleBlur(e) { setTouched((t) => ({ ...t, [e.target.name]: true })) }
   function fieldErr(n)   { return touched[n] && errors[n] ? errors[n] : '' }
+
+  function updateBlocks(blocks) {
+    const body = blocks
+      .filter((block) => block.type === 'paragraph')
+      .map((block) => block.text || '')
+      .filter(Boolean)
+      .join('\n\n')
+    setForm((current) => ({ ...current, blocks, body }))
+    if (errors.body && blocks.length) setErrors((current) => ({ ...current, body: '' }))
+  }
+
+  function addBlock(type) {
+    const blank = { type, text: '', imageUrl: '', alt: '', caption: '' }
+    updateBlocks([...form.blocks, blank])
+  }
+
+  function editBlock(index, patch) {
+    updateBlocks(form.blocks.map((block, i) => i === index ? { ...block, ...patch } : block))
+  }
+
+  function moveBlock(index, offset) {
+    const target = index + offset
+    if (target < 0 || target >= form.blocks.length) return
+    const blocks = [...form.blocks]
+    ;[blocks[index], blocks[target]] = [blocks[target], blocks[index]]
+    updateBlocks(blocks)
+  }
+
+  async function uploadBlockImage(index, file) {
+    if (!file) return
+    setUploadingBlock(index)
+    try {
+      const image = await addImage(file, 'updates', form.blocks[index].alt)
+      editBlock(index, { imageUrl: image.url })
+    } catch (err) {
+      showToast('error', err.message || 'Échec du téléversement de l’image.')
+    } finally {
+      setUploadingBlock(null)
+    }
+  }
 
   async function handlePublish() {
     const allTouched = Object.fromEntries(['title','date','excerpt','body'].map((k) => [k, true]))
@@ -185,7 +234,7 @@ export default function AdminUpdates() {
                 <div className="adm-field">
                   <label className="adm-label" htmlFor="upd-cat">Catégorie</label>
                   <select id="upd-cat" name="category" className="adm-select" value={form.category} onChange={handleChange}>
-                    {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                    {categories.map((category) => <option key={category.id} value={category.slug}>{category.name}</option>)}
                   </select>
                 </div>
               </div>
@@ -197,11 +246,73 @@ export default function AdminUpdates() {
                 {fieldErr('excerpt') && <p className="adm-field-error">{fieldErr('excerpt')}</p>}
               </div>
 
-              {/* Body */}
+              {/* Block editor */}
               <div className={`adm-field${fieldErr('body') ? ' adm-field--err' : ''}`}>
-                <label className="adm-label" htmlFor="upd-body">Contenu <span className="adm-req">*</span></label>
-                <textarea id="upd-body" name="body" className={`adm-textarea${fieldErr('body') ? ' adm-input--error':''}`} style={{ minHeight: 220 }} value={form.body} onChange={handleChange} onBlur={handleBlur} placeholder="Article complet. Séparez les paragraphes par une ligne vide." aria-required="true" />
+                <span className="adm-label">Contenu de l’article <span className="adm-req">*</span></span>
+                <div className="adm-updates__blocks">
+                  {form.blocks.map((block, index) => (
+                    <article className="adm-updates__block" key={`${block.type}-${index}`}>
+                      <div className="adm-updates__block-header">
+                        <strong>{block.type === 'paragraph' ? 'Paragraphe' : block.type === 'heading' ? 'Intertitre' : 'Image'} {index + 1}</strong>
+                        <div className="adm-updates__block-actions">
+                          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => moveBlock(index, -1)} disabled={index === 0} aria-label="Monter le bloc">↑</button>
+                          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => moveBlock(index, 1)} disabled={index === form.blocks.length - 1} aria-label="Descendre le bloc">↓</button>
+                          <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => updateBlocks(form.blocks.filter((_, i) => i !== index))}>Supprimer</button>
+                        </div>
+                      </div>
+                      {block.type === 'paragraph' && (
+                        <textarea className="adm-textarea" value={block.text} rows={5}
+                          onChange={(event) => editBlock(index, { text: event.target.value })}
+                          placeholder="Écrivez votre paragraphe…" aria-label={`Paragraphe ${index + 1}`} />
+                      )}
+                      {block.type === 'heading' && (
+                        <input className="adm-input" value={block.text}
+                          onChange={(event) => editBlock(index, { text: event.target.value })}
+                          placeholder="Texte de l’intertitre" aria-label={`Intertitre ${index + 1}`} />
+                      )}
+                      {block.type === 'image' && (
+                        <div className="adm-updates__block-image-fields">
+                          {block.imageUrl && <img src={block.imageUrl} alt={block.alt} className="adm-updates__block-image-preview" />}
+                          <input className="adm-input" type="url" value={block.imageUrl}
+                            onChange={(event) => editBlock(index, { imageUrl: event.target.value })}
+                            placeholder="URL de l’image" aria-label={`URL de l’image ${index + 1}`} />
+                          <label className="adm-btn adm-btn--outline adm-btn--sm adm-updates__block-upload">
+                            {uploadingBlock === index ? 'Téléversement…' : 'Téléverser une image'}
+                            <input type="file" accept="image/*" disabled={uploadingBlock === index}
+                              onChange={(event) => {
+                                uploadBlockImage(index, event.target.files?.[0])
+                                event.target.value = ''
+                              }} />
+                          </label>
+                          <input className="adm-input" value={block.alt}
+                            onChange={(event) => editBlock(index, { alt: event.target.value })}
+                            placeholder="Texte alternatif" aria-label={`Texte alternatif ${index + 1}`} />
+                          <input className="adm-input" value={block.caption}
+                            onChange={(event) => editBlock(index, { caption: event.target.value })}
+                            placeholder="Légende (facultative)" aria-label={`Légende ${index + 1}`} />
+                        </div>
+                      )}
+                    </article>
+                  ))}
+                  <div className="adm-updates__add-blocks">
+                    <button type="button" className="adm-btn adm-btn--outline adm-btn--sm" onClick={() => addBlock('paragraph')}>+ Paragraphe</button>
+                    <button type="button" className="adm-btn adm-btn--outline adm-btn--sm" onClick={() => addBlock('heading')}>+ Intertitre</button>
+                    <button type="button" className="adm-btn adm-btn--outline adm-btn--sm" onClick={() => addBlock('image')}>+ Image</button>
+                  </div>
+                </div>
                 {fieldErr('body') && <p className="adm-field-error">{fieldErr('body')}</p>}
+              </div>
+
+              <div className="adm-updates__live-preview">
+                <h3>Aperçu de l’article</h3>
+                {form.blocks.map((block, index) => {
+                  if (block.type === 'heading') return <h4 key={index}>{block.text || 'Intertitre'}</h4>
+                  if (block.type === 'image') return block.imageUrl
+                    ? <figure key={index}><img src={block.imageUrl} alt={block.alt} /><figcaption>{block.caption || block.alt}</figcaption></figure>
+                    : <p key={index}>Image à ajouter</p>
+                  return <p key={index}>{block.text || 'Votre paragraphe apparaîtra ici.'}</p>
+                })}
+                {!form.blocks.length && <p className="adm-content__empty">Ajoutez des blocs pour prévisualiser l’article.</p>}
               </div>
             </div>
 

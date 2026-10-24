@@ -3,10 +3,8 @@ import UpdateCard from '../components/UpdateCard'
 import { useData } from '../store/DataContext'
 import './News.css'
 
-const CATS = ['Tous', 'agriculture', 'formation', 'partenariats', 'communauté', 'infrastructure', 'général']
-
 export default function News() {
-  const { updates } = useData()
+  const { updates, categories } = useData()
   const [filter, setFilter] = useState('Tous')
 
   const sorted    = [...updates].sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -28,14 +26,14 @@ export default function News() {
       <section className="section section--white">
         <div className="container">
           <div className="news__filters" role="group" aria-label="Filtrer par catégorie">
-            {CATS.map(cat => (
+            {[{ slug: 'Tous', name: 'Tous' }, ...categories].map(({ slug, name }) => (
               <button
-                key={cat}
-                className={`news__filter-btn${filter === cat ? ' news__filter-btn--active' : ''}`}
-                onClick={() => setFilter(cat)}
-                aria-pressed={filter === cat}
+                key={slug}
+                className={`news__filter-btn${filter === slug ? ' news__filter-btn--active' : ''}`}
+                onClick={() => setFilter(slug)}
+                aria-pressed={filter === slug}
               >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                {name}
               </button>
             ))}
           </div>

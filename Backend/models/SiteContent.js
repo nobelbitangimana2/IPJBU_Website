@@ -14,7 +14,7 @@ const siteContentSchema = new mongoose.Schema(
       default: 'Une jeunesse autonome, solidaire et actrice du développement socio-économique du Burundi.',
     },
     partners: {
-      type: [String],
+      type: [mongoose.Schema.Types.Mixed],
       default: [],
     },
   },

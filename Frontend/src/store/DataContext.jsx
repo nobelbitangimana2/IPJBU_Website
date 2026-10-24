@@ -25,9 +25,18 @@ const DEFAULT_CONTACT = {
   mapEmbedUrl: '',
 }
 
+function normalizePartner(partner) {
+  return typeof partner === 'string' ? { name: partner, logoUrl: '', websiteUrl: '' } : {
+    name: partner?.name || '',
+    logoUrl: partner?.logoUrl || '',
+    websiteUrl: partner?.websiteUrl || '',
+  }
+}
+
 export function DataProvider({ children }) {
   const [images,   setImages]   = useState([])
   const [updates,  setUpdates]  = useState([])
+  const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
   const [team,     setTeam]     = useState([])
   const [content,  setContent]  = useState(DEFAULT_CONTENT)
@@ -36,20 +45,25 @@ export function DataProvider({ children }) {
   // ── Initial load ─────────────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
     try {
-      const [imgsRes, updsRes, prodsRes, teamRes, contRes, ctctRes] = await Promise.allSettled([
+      const [imgsRes, updsRes, prodsRes, teamRes, contRes, ctctRes, catsRes] = await Promise.allSettled([
         api.get('/api/media'),
         api.get('/api/updates'),
         api.get('/api/products'),
         api.get('/api/team'),
         api.get('/api/content'),
         api.get('/api/contact'),
+        api.get('/api/categories'),
       ])
       if (imgsRes.status  === 'fulfilled') setImages(imgsRes.value.data)
       if (updsRes.status  === 'fulfilled') setUpdates(updsRes.value.data)
       if (prodsRes.status === 'fulfilled') setProducts(prodsRes.value.data)
       if (teamRes.status  === 'fulfilled') setTeam(teamRes.value.data)
-      if (contRes.status  === 'fulfilled') setContent(contRes.value.data || DEFAULT_CONTENT)
+      if (contRes.status  === 'fulfilled') {
+        const loadedContent = contRes.value.data || DEFAULT_CONTENT
+        setContent({ ...loadedContent, partners: (loadedContent.partners || []).map(normalizePartner) })
+      }
       if (ctctRes.status  === 'fulfilled') setContact(ctctRes.value.data || DEFAULT_CONTACT)
+      if (catsRes.status === 'fulfilled') setCategories(catsRes.value.data)
     } catch (err) {
       console.error('DataContext initial load error:', err)
     }
@@ -129,12 +143,34 @@ export function DataProvider({ children }) {
     setUpdates((prev) => prev.filter((u) => u.id !== id))
   }
 
+  async function addCategory(data) {
+    const res = await api.post('/api/admin/categories', data)
+    setCategories((prev) => [...prev, res.data].sort((a, b) => a.name.localeCompare(b.name, 'fr')))
+    return res.data
+  }
+
+  async function updateCategory(id, data) {
+    const res = await api.put(`/api/admin/categories/${id}`, data)
+    setCategories((prev) => prev.map((category) => category.id === id ? res.data : category)
+      .sort((a, b) => a.name.localeCompare(b.name, 'fr')))
+    return res.data
+  }
+
+  async function deleteCategory(id) {
+    await api.delete(`/api/admin/categories/${id}`)
+    setCategories((prev) => prev.filter((category) => category.id !== id))
+  }
+
   // ── Content actions ───────────────────────────────────────────────────────────
 
   async function saveContent(patch) {
-    const res = await api.put('/api/admin/content', patch)
-    setContent(res.data)
-    return res.data
+    const res = await api.put('/api/admin/content', {
+      ...patch,
+      partners: (patch.partners || []).map(normalizePartner),
+    })
+    const saved = { ...res.data, partners: (res.data.partners || []).map(normalizePartner) }
+    setContent(saved)
+    return saved
   }
 
   // ── Contact actions ───────────────────────────────────────────────────────────
@@ -186,12 +222,13 @@ export function DataProvider({ children }) {
   return (
     <DataContext.Provider value={{
       // State
-      images, updates, products, team, content, contact,
+      images, updates, categories, products, team, content, contact,
       // Image actions
       addImage, deleteImage, updateImage, reorderImages,
       uploadTeamPhoto,
       // Update actions
       addUpdate, editUpdate, deleteUpdate,
+      addCategory, updateCategory, deleteCategory,
       // Product actions
       addProduct, editProduct, deleteProduct,
       // Team actions

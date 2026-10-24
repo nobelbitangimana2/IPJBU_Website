@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/admin',         label: 'Tableau de bord', icon: '▦',  end: true },
   { to: '/admin/media',   label: 'Médias',          icon: '🖼'            },
   { to: '/admin/updates', label: 'Actualités',      icon: '📰'            },
+  { to: '/admin/categories', label: 'Catégories',  icon: '🏷'            },
   { to: '/admin/content', label: 'Contenu & Partenaires', icon: '✏️'      },
   { to: '/admin/contact', label: 'Contact',         icon: '📋'            },
   { to: '/admin/team',    label: 'Équipe',          icon: '👥'            },

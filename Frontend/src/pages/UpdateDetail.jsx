@@ -8,12 +8,85 @@ import './UpdateDetail.css'
 export default function UpdateDetail() {
   const { id }     = useParams()
   const navigate   = useNavigate()
-  const { updates } = useData()
+  const { updates, contact } = useData()
 
   const [update,  setUpdate]  = useState(null)
   const [related, setRelated] = useState([])
   const [loading, setLoading] = useState(true)
   const [error,   setError]   = useState('')
+  const [shareMessage, setShareMessage] = useState('')
+  const shareUrl = `${window.location.origin}/news/${id}`
+
+  useEffect(() => {
+    if (!update) return undefined
+
+    // Social crawlers do not run this JavaScript; Vercel's crawler rewrite serves OG HTML.
+    const originalTitle = document.title
+    const previous = []
+    const setMeta = (key, value, attribute = 'property') => {
+      let element = document.head.querySelector(`meta[${attribute}="${key}"]`)
+      const created = !element
+      if (!element) {
+        element = document.createElement('meta')
+        element.setAttribute(attribute, key)
+        document.head.appendChild(element)
+      }
+      previous.push({ element, created, content: element.getAttribute('content') })
+      element.setAttribute('content', value)
+    }
+
+    document.title = `${update.title} | IPJBU – DUHINDURINGENDO`
+    setMeta('description', update.excerpt, 'name')
+    setMeta('og:type', 'article')
+    setMeta('og:title', update.title)
+    setMeta('og:description', update.excerpt)
+    setMeta('og:image', update.imageUrl || '')
+    setMeta('og:url', shareUrl)
+    setMeta('twitter:card', 'summary_large_image', 'name')
+    setMeta('twitter:title', update.title, 'name')
+    setMeta('twitter:description', update.excerpt, 'name')
+    setMeta('twitter:image', update.imageUrl || '', 'name')
+
+    return () => {
+      document.title = originalTitle
+      previous.forEach(({ element, created, content }) => {
+        if (created) element.remove()
+        else if (content === null) element.removeAttribute('content')
+        else element.setAttribute('content', content)
+      })
+    }
+  }, [update, shareUrl])
+
+  async function copyLink() {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl)
+      } else {
+        const input = document.createElement('textarea')
+        input.value = shareUrl
+        input.setAttribute('readonly', '')
+        input.style.position = 'fixed'
+        input.style.opacity = '0'
+        document.body.appendChild(input)
+        input.select()
+        const copied = document.execCommand('copy')
+        input.remove()
+        if (!copied) throw new Error('Copie non disponible dans ce navigateur.')
+      }
+      setShareMessage('Lien copié')
+      setTimeout(() => setShareMessage(''), 2500)
+    } catch (err) {
+      setShareMessage(err.message || 'Impossible de copier le lien.')
+    }
+  }
+
+  async function nativeShare() {
+    try {
+      await navigator.share({ title: update.title, text: update.excerpt, url: shareUrl })
+    } catch (err) {
+      if (err.name !== 'AbortError') setShareMessage('Le partage a échoué.')
+    }
+  }
 
   useEffect(() => {
     if (updates.length === 0) return // still loading from API
@@ -83,10 +156,40 @@ export default function UpdateDetail() {
             <Link to="/news">← Retour aux actualités</Link>
           </nav>
           <div className="ud__text">
-            {update.body.split('\n\n').map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
+            {update.blocks?.length
+              ? update.blocks.map((block, index) => {
+                if (block.type === 'heading') return <h2 className="ud__content-heading" key={index}>{block.text}</h2>
+                if (block.type === 'image') {
+                  return (
+                    <figure className="ud__figure" key={index}>
+                      <img src={block.imageUrl} alt={block.alt || ''} loading="lazy" />
+                      {block.caption && <figcaption>{block.caption}</figcaption>}
+                    </figure>
+                  )
+                }
+                return <p key={index}>{block.text}</p>
+              })
+              : (update.body || '').split('\n\n').map((para, i) => <p key={i}>{para}</p>)}
           </div>
+          <section className="ud__share" aria-label="Partager cet article">
+            <h2 className="ud__share-title">Partager</h2>
+            <div className="ud__share-links">
+              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`${update.title} ${shareUrl}`)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(update.title)}&url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">X / Twitter</a>
+              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <button type="button" onClick={copyLink}>Copier le lien</button>
+              {typeof navigator !== 'undefined' && navigator.share && (
+                <button type="button" onClick={nativeShare}>Partager…</button>
+              )}
+            </div>
+            {shareMessage && <p className="ud__share-message" role="status">{shareMessage}</p>}
+            {contact?.socialLinks?.facebook && (
+              <a className="ud__facebook-follow" href={contact.socialLinks.facebook} target="_blank" rel="noopener noreferrer">
+                Suivez-nous sur Facebook
+              </a>
+            )}
+          </section>
           <div className="ud__actions">
             <Button to="/news" variant="outline">← Toutes les actualités</Button>
             <Button to="/contact">Nous contacter</Button>

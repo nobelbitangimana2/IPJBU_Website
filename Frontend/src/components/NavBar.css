@@ -88,6 +88,7 @@
 }
 
 .navbar__cta:hover { background: var(--green-mid); }
+.navbar__cta--active { background: var(--green-mid); }
 
 /* Hamburger */
 .navbar__hamburger {
@@ -158,6 +159,7 @@
 }
 
 .navbar__mobile-cta:hover { background: var(--green-mid); }
+.navbar__mobile-cta--active { background: var(--green-mid); }
 
 @media (min-width: 900px) {
   .navbar__links   { display: flex; }

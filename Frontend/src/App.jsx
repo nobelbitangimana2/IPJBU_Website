@@ -23,6 +23,7 @@ import AdminUpdates     from './admin/AdminUpdates'
 import AdminContent     from './admin/AdminContent'
 import AdminContactInfo from './admin/AdminContactInfo'
 import AdminTeam        from './admin/AdminTeam'
+import AdminCategories from './admin/AdminCategories'
 
 function PublicSite() {
   return (
@@ -66,6 +67,7 @@ export default function App() {
         <Route index           element={<AdminDashboard />}   />
         <Route path="media"    element={<AdminMedia />}       />
         <Route path="updates"  element={<AdminUpdates />}     />
+        <Route path="categories" element={<AdminCategories />} />
         <Route path="content"  element={<AdminContent />}     />
         <Route path="contact"  element={<AdminContactInfo />} />
         <Route path="team"     element={<AdminTeam />}        />

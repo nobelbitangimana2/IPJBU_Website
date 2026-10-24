@@ -13,6 +13,18 @@ const contentRoutes  = require('./routes/content')
 const contactRoutes  = require('./routes/contact')
 const productsRoutes = require('./routes/products')
 const teamRoutes     = require('./routes/team')
+const categoriesRoutes = require('./routes/categories')
+const Category       = require('./models/Category')
+const Update         = require('./models/Update')
+
+const DEFAULT_CATEGORIES = [
+  'agriculture', 'formation', 'partenariats', 'communauté', 'infrastructure', 'général',
+]
+
+function categorySlug(value) {
+  return value.toLowerCase().trim()
+    .replace(/[^a-z0-9\u00c0-\u024f]+/g, '-').replace(/^-|-$/g, '')
+}
 
 const app  = express()
 const PORT = process.env.PORT || 5000
@@ -53,6 +65,7 @@ app.use('/api',         contentRoutes)  // GET /api/content + /api/admin/content
 app.use('/api',         contactRoutes)  // GET /api/contact + /api/admin/contact
 app.use('/api',         productsRoutes) // GET /api/products + /api/admin/products
 app.use('/api',         teamRoutes)     // GET /api/team + /api/admin/team
+app.use('/api',         categoriesRoutes) // GET /api/categories + /api/admin/categories
 
 // ── Health check ───────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
@@ -69,8 +82,27 @@ app.use((err, _req, res, _next) => {
 // ── Connect to MongoDB then start ──────────────────────────────────────────────
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('✓ MongoDB connected')
+    try {
+      const initialized = await Promise.all([
+        ...DEFAULT_CATEGORIES.map((name) => Category.updateOne(
+          { slug: categorySlug(name) }, { $setOnInsert: { name, slug: categorySlug(name) } }, { upsert: true }
+        )),
+        Update.distinct('category'),
+      ])
+      const legacyCategories = initialized[initialized.length - 1]
+      const defaults = new Set(DEFAULT_CATEGORIES.map(categorySlug))
+      for (const value of legacyCategories.filter((item) => typeof item === 'string' && item.trim())) {
+        const slug = categorySlug(value)
+        if (slug && !defaults.has(slug)) {
+          await Category.updateOne({ slug }, { $setOnInsert: { name: value, slug } }, { upsert: true })
+        }
+      }
+    } catch (err) {
+      console.error('✗ Category initialization failed:', err.message)
+      process.exit(1)
+    }
     app.listen(PORT, () => console.log(`✓ Server running on http://localhost:${PORT}`))
   })
   .catch((err) => {

@@ -7,7 +7,6 @@ const NAV_LINKS = [
   { to: '/about',       label: 'À propos'             },
   { to: '/programmes',  label: 'Programmes'           },
   { to: '/gallery',     label: 'Galerie'              },
-  { to: '/news',        label: 'Actualités'           },
   { to: '/contact',     label: 'Contact'              },
 ]
 
@@ -55,9 +54,13 @@ export default function NavBar() {
 
         {/* Desktop CTA */}
         <div className="navbar__actions">
-          <Link to="/news" className="navbar__cta" onClick={close}>
+          <NavLink
+            to="/news"
+            className={({ isActive }) => 'navbar__cta' + (isActive ? ' navbar__cta--active' : '')}
+            onClick={close}
+          >
             Actualités
-          </Link>
+          </NavLink>
         </div>
 
         {/* Hamburger */}
@@ -92,9 +95,13 @@ export default function NavBar() {
             {label}
           </NavLink>
         ))}
-        <Link to="/news" className="navbar__mobile-cta" onClick={close}>
+        <NavLink
+          to="/news"
+          className={({ isActive }) => 'navbar__mobile-cta' + (isActive ? ' navbar__mobile-cta--active' : '')}
+          onClick={close}
+        >
           Actualités
-        </Link>
+        </NavLink>
       </nav>
     </header>
   )

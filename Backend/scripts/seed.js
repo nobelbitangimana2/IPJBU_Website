@@ -26,6 +26,7 @@ const Admin       = require('../models/Admin')
 const Update      = require('../models/Update')
 const SiteContent = require('../models/SiteContent')
 const Contact     = require('../models/Contact')
+const Category    = require('../models/Category')
 
 async function seed() {
   // ── Vérification des variables d'environnement requises ─────────────────────
@@ -41,6 +42,13 @@ async function seed() {
 
   await mongoose.connect(process.env.MONGO_URI)
   console.log('✓ Connecté à MongoDB')
+
+  const categories = ['agriculture', 'formation', 'partenariats', 'communauté', 'infrastructure', 'général']
+  for (const name of categories) {
+    const slug = name.toLowerCase()
+    await Category.updateOne({ slug }, { $setOnInsert: { name, slug } }, { upsert: true })
+  }
+  console.log('✓ Catégories vérifiées')
 
   // ── Utilisateur admin ──────────────────────────────────────────────────────
   const adminUsername = process.env.ADMIN_USERNAME.trim().toLowerCase()

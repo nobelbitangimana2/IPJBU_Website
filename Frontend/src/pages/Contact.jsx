@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Button  from '../components/Button'
 import { useData } from '../store/DataContext'
-import { getContactInfo, submitContactForm } from '../data/contact'
+import { submitContactForm } from '../data/contact'
 import './Contact.css'
 
 const INIT = { name: '', email: '', message: '' }
@@ -16,14 +16,11 @@ function validate(f) {
 }
 
 export default function Contact() {
-  const { contact: liveContact } = useData()
-  const [info,    setInfo]    = useState(null)
+  const { contact: info } = useData()
   const [fields,  setFields]  = useState(INIT)
   const [errors,  setErrors]  = useState({})
   const [touched, setTouched] = useState({})
   const [status,  setStatus]  = useState('idle')
-
-  useEffect(() => { getContactInfo(liveContact).then(setInfo) }, [liveContact])
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -141,7 +138,7 @@ export default function Contact() {
                         url ? (
                           <a key={p} href={url} target="_blank" rel="noopener noreferrer"
                             className="contact__social-pill">
-                            {p.charAt(0).toUpperCase() + p.slice(1)}
+                            {p === 'facebook' ? 'Suivez-nous sur Facebook' : p.charAt(0).toUpperCase() + p.slice(1)}
                           </a>
                         ) : null
                       )}

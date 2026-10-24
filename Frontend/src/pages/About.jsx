@@ -227,9 +227,15 @@ export default function About() {
               </p>
             </div>
             <div className="about__partners">
-              {content.partners.map(p => (
-                <div key={p} className="about__partner-badge">{p}</div>
-              ))}
+              {content.partners.map((entry, index) => {
+                const partner = typeof entry === 'string' ? { name: entry } : entry
+                const badge = partner.logoUrl
+                  ? <img src={partner.logoUrl} alt={partner.name} className="about__partner-logo" loading="lazy" />
+                  : partner.name
+                return partner.websiteUrl
+                  ? <a key={`${partner.name}-${index}`} href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="about__partner-badge">{badge}</a>
+                  : <div key={`${partner.name}-${index}`} className="about__partner-badge">{badge}</div>
+              })}
             </div>
             <div className="text-center mt-3">
               <Button to="/contact">Devenir partenaire</Button>

@@ -62,7 +62,7 @@ const VALUES = [
 ]
 
 export default function Home() {
-  const { updates } = useData()
+  const { updates, content } = useData()
   const [slide, setSlide] = useState(0)
 
   useEffect(() => {
@@ -189,6 +189,32 @@ export default function Home() {
             </div>
             <div className="grid-3">
               {latest.map(u => <UpdateCard key={u.id} {...u} dark />)}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {(content.partners || []).length > 0 && (
+        <section className="home-partners section--cream" aria-label="Nos partenaires">
+          <div className="container">
+            <div className="home-partners__header">
+              <span className="section__label">Ils nous accompagnent</span>
+              <h2 className="section__title">Nos partenaires</h2>
+            </div>
+            <div className="home-partners__grid">
+              {content.partners.map((entry, index) => {
+                const partner = typeof entry === 'string' ? { name: entry } : entry
+                const content = partner.logoUrl
+                  ? <img src={partner.logoUrl} alt={partner.name} loading="lazy" />
+                  : <span>{partner.name}</span>
+                return partner.websiteUrl ? (
+                  <a key={`${partner.name}-${index}`} href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="home-partners__item">
+                    {content}
+                  </a>
+                ) : (
+                  <div key={`${partner.name}-${index}`} className="home-partners__item">{content}</div>
+                )
+              })}
             </div>
           </div>
         </section>

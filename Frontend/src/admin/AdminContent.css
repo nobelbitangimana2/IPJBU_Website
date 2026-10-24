@@ -65,6 +65,20 @@
 
 .adm-content__partner-row .adm-input { flex: 1; }
 
+.adm-content__partner-fields {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.adm-content__partner-upload {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
 .adm-content__remove-partner { flex-shrink: 0; }
 
 .adm-content__empty {
@@ -77,6 +91,7 @@
   .adm-content__field-header { flex-wrap: wrap; }
   .adm-content__add-partner { margin-left: 0; }
   .adm-content__partner-row { align-items: stretch; flex-direction: column; }
+  .adm-content__partner-fields { grid-template-columns: 1fr; }
 }
 
 /* Preview */

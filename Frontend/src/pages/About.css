@@ -216,6 +216,9 @@
 }
 
 .about__partner-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: var(--radius-pill);
   padding: 0.5rem 1.1rem;
@@ -223,6 +226,13 @@
   font-weight: 500;
   color: rgba(255,255,255,0.8);
   background: rgba(255,255,255,0.08);
+  text-decoration: none;
+}
+
+.about__partner-logo {
+  max-width: 160px;
+  max-height: 48px;
+  object-fit: contain;
 }
 
 /* ── Intro grid (Présentation) ── */

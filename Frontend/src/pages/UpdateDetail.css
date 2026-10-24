@@ -107,11 +107,93 @@
   max-width: 720px;
 }
 
+.ud__content-heading {
+  margin: 0.8rem 0 -0.35rem;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 1.35;
+  color: var(--black);
+}
+
+.ud__figure {
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+.ud__figure img {
+  display: block;
+  width: 100%;
+  max-height: 620px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background: var(--cream);
+}
+
+.ud__figure figcaption {
+  margin-top: 0.45rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .ud__actions {
   display: flex;
   gap: 1rem;
   margin-top: 2.5rem;
   flex-wrap: wrap;
+}
+
+.ud__share {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+}
+
+.ud__share-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.ud__share-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ud__share-links a,
+.ud__share-links button {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 0.45rem 0.8rem;
+  color: var(--text);
+  background: var(--white);
+  font: inherit;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ud__share-links a:hover,
+.ud__share-links button:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.ud__share-message,
+.ud__facebook-follow {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.ud__facebook-follow {
+  text-decoration: underline;
 }
 
 /* Sidebar */

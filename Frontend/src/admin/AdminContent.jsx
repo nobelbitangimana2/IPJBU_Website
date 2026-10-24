@@ -3,7 +3,7 @@ import { useData } from '../store/DataContext'
 import './AdminContent.css'
 
 export default function AdminContent() {
-  const { content, saveContent } = useData()
+  const { content, saveContent, addImage } = useData()
 
   const [mission, setMission] = useState(content.mission)
   const [vision,  setVision]  = useState(content.vision)
@@ -11,6 +11,7 @@ export default function AdminContent() {
   const [errors,  setErrors]  = useState({})
   const [toast,   setToast]   = useState(null)
   const [dirty,   setDirty]   = useState(false)
+  const [uploadingPartner, setUploadingPartner] = useState(null)
 
   // Keep local state in sync if context resets (e.g. future SSR hydration)
   useEffect(() => {
@@ -31,14 +32,16 @@ export default function AdminContent() {
     const e = {}
     if (!mission.trim()) e.mission = 'Le texte de la mission est requis.'
     if (!vision.trim())  e.vision  = 'Le texte de la vision est requis.'
-    if (partners.some((partner) => !partner.trim())) e.partners = 'Les noms de partenaires ne peuvent pas être vides.'
+    if (partners.some((partner) => !partner.name.trim())) e.partners = 'Les noms de partenaires ne peuvent pas être vides.'
     return e
   }
 
   function handleSave() {
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
-    saveContent({ mission, vision, partners: partners.map((partner) => partner.trim()) })
+    saveContent({ mission, vision, partners: partners.map((partner) => ({
+      name: partner.name.trim(), logoUrl: partner.logoUrl.trim(), websiteUrl: partner.websiteUrl.trim(),
+    })) })
       .then(() => {
         setDirty(false)
         setToast({ type: 'success', msg: 'Mission et Vision enregistrées. Les modifications sont en ligne.' })
@@ -59,14 +62,28 @@ export default function AdminContent() {
   }
 
   function updatePartner(index, value) {
-    setPartners((current) => current.map((partner, i) => i === index ? value : partner))
+    setPartners((current) => current.map((partner, i) => i === index ? { ...partner, ...value } : partner))
     setDirty(true)
     if (errors.partners) setErrors((current) => ({ ...current, partners: '' }))
   }
 
   function addPartner() {
-    setPartners((current) => [...current, ''])
+    setPartners((current) => [...current, { name: '', logoUrl: '', websiteUrl: '' }])
     setDirty(true)
+  }
+
+  async function uploadPartnerLogo(index, file) {
+    if (!file) return
+    setUploadingPartner(index)
+    try {
+      const image = await addImage(file, 'partners', partners[index].name)
+      updatePartner(index, { logoUrl: image.url })
+    } catch (err) {
+      setToast({ type: 'error', msg: err.message || 'Échec du téléversement du logo.' })
+      setTimeout(() => setToast(null), 3500)
+    } finally {
+      setUploadingPartner(null)
+    }
   }
 
   function removePartner(index) {
@@ -175,7 +192,7 @@ export default function AdminContent() {
           <div>
             <h2 className="adm-content__field-title">Partenaires</h2>
             <p className="adm-content__field-hint">
-              Gérez les organisations affichées dans la section Partenaires de la page À propos.
+              Gérez les organisations affichées sur les pages Accueil et À propos.
             </p>
           </div>
           <button type="button" className="adm-btn adm-btn--ghost adm-content__add-partner" onClick={addPartner}>
@@ -186,14 +203,26 @@ export default function AdminContent() {
         <div className="adm-content__partners-list">
           {partners.map((partner, index) => (
             <div key={index} className={`adm-content__partner-row${errors.partners ? ' adm-field--err' : ''}`}>
-              <label htmlFor={`content-partner-${index}`} className="adm-sr-only">Partenaire {index + 1}</label>
-              <input
-                id={`content-partner-${index}`}
-                className="adm-input"
-                value={partner}
-                onChange={(event) => updatePartner(index, event.target.value)}
-                placeholder="Nom de l'organisation partenaire"
-              />
+              <div className="adm-content__partner-fields">
+                <label className="adm-sr-only" htmlFor={`content-partner-${index}`}>Partenaire {index + 1}</label>
+                <input id={`content-partner-${index}`} className="adm-input" value={partner.name}
+                  onChange={(event) => updatePartner(index, { name: event.target.value })}
+                  placeholder="Nom de l'organisation partenaire" />
+                <label className="adm-sr-only" htmlFor={`content-partner-logo-${index}`}>URL du logo</label>
+                <input id={`content-partner-logo-${index}`} className="adm-input" type="url" value={partner.logoUrl}
+                  onChange={(event) => updatePartner(index, { logoUrl: event.target.value })}
+                  placeholder="URL du logo (facultatif)" />
+                <label className="adm-sr-only" htmlFor={`content-partner-website-${index}`}>Site web du partenaire</label>
+                <input id={`content-partner-website-${index}`} className="adm-input" type="url" value={partner.websiteUrl}
+                  onChange={(event) => updatePartner(index, { websiteUrl: event.target.value })}
+                  placeholder="Site web (facultatif)" />
+                <label className="adm-btn adm-btn--outline adm-btn--sm adm-content__partner-upload" htmlFor={`content-partner-file-${index}`}>
+                  {uploadingPartner === index ? 'Téléversement…' : 'Téléverser un logo'}
+                </label>
+                <input id={`content-partner-file-${index}`} type="file" accept="image/*" className="adm-sr-only"
+                  disabled={uploadingPartner === index}
+                  onChange={(event) => uploadPartnerLogo(index, event.target.files?.[0])} />
+              </div>
               <button
                 type="button"
                 className="adm-btn adm-btn--danger adm-content__remove-partner"
@@ -223,7 +252,7 @@ export default function AdminContent() {
           </div>
           <div className="adm-content__preview-block">
             <span className="adm-content__preview-label">Partenaires</span>
-            <p>{partners.length ? partners.join(' · ') : <em className="adm-content__preview-empty">Aucun ajouté</em>}</p>
+            <p>{partners.length ? partners.map((partner) => partner.name || 'Sans nom').join(' · ') : <em className="adm-content__preview-empty">Aucun ajouté</em>}</p>
           </div>
         </div>
       </div>

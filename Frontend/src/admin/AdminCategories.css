@@ -1,0 +1,55 @@
+.adm-categories__add {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1.25rem;
+}
+
+.adm-categories__list {
+  padding: 0.5rem 1.25rem;
+}
+
+.adm-categories__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 64px;
+  border-bottom: 1px solid var(--border);
+}
+
+.adm-categories__row:last-child {
+  border-bottom: 0;
+}
+
+.adm-categories__name {
+  font-weight: 700;
+  flex: 1;
+}
+
+.adm-categories__slug,
+.adm-categories__empty {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.adm-categories__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .adm-categories__add {
+    grid-template-columns: 1fr;
+  }
+
+  .adm-categories__row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0.8rem 0;
+  }
+
+  .adm-categories__slug {
+    width: 100%;
+  }
+}
