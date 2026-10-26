@@ -7,8 +7,9 @@
  * The public site reads from this context so admin changes are
  * immediately reflected without a page reload.
  */
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import api from '../services/api'
+import { GALLERY_CATEGORIES } from '../data/galleryCategories'
 
 const DataContext = createContext(null)
 
@@ -41,6 +42,13 @@ export function DataProvider({ children }) {
   const [team,     setTeam]     = useState([])
   const [content,  setContent]  = useState(DEFAULT_CONTENT)
   const [contact,  setContact]  = useState(DEFAULT_CONTACT)
+
+  // Public gallery / Home images: only whitelisted categories.
+  // Article images ('updates'), partner logos ('partners'), etc. are excluded by default.
+  const galleryImages = useMemo(
+    () => images.filter((img) => GALLERY_CATEGORIES.includes(img.category)),
+    [images]
+  )
 
   // ── Initial load ─────────────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
@@ -222,7 +230,7 @@ export function DataProvider({ children }) {
   return (
     <DataContext.Provider value={{
       // State
-      images, updates, categories, products, team, content, contact,
+      images, galleryImages, updates, categories, products, team, content, contact,
       // Image actions
       addImage, deleteImage, updateImage, reorderImages,
       uploadTeamPhoto,

@@ -5,7 +5,7 @@ import UpdateCard from '../components/UpdateCard'
 import { useData } from '../store/DataContext'
 import './Home.css'
 
-/* ── Fallbacks, used only if the media library is empty ── */
+/* ── Fallbacks, used only if the media library has no gallery images ── */
 const FALLBACK_SLIDES = [
   {
     url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80',
@@ -21,6 +21,19 @@ const FALLBACK_SLIDES = [
   },
 ]
 const FALLBACK_PHOTO = 'https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=900&q=80'
+
+/* ── Responsive image sizes via ImageKit URL transformations (no effect on other hosts) ── */
+const IK_HOST = 'ik.imagekit.io'
+
+function resized(url, width) {
+  if (!url || !url.includes(IK_HOST)) return url
+  return `${url}${url.includes('?') ? '&' : '?'}tr=w-${width}`
+}
+
+function heroSrcSet(url) {
+  if (!url || !url.includes(IK_HOST)) return undefined
+  return [640, 1024, 1600].map((w) => `${resized(url, w)} ${w}w`).join(', ')
+}
 
 /* ── Feature cards ── */
 const FEATURES = [
@@ -62,18 +75,16 @@ const VALUES = [
 ]
 
 export default function Home() {
-  const { updates, content, images } = useData()
+  const { updates, content, galleryImages } = useData()
   const [slide, setSlide] = useState(0)
 
-  // Media library images only (skip images uploaded for articles)
-  const libraryImages = (images || []).filter((i) => i.category !== 'updates')
-
-  const slides = libraryImages.length
-    ? libraryImages.slice(0, 5).map((i) => ({ url: i.url, alt: i.alt || 'Photo IPJBU' }))
+  // Hero: first 5 gallery images from the media library, else fallbacks
+  const slides = galleryImages.length
+    ? galleryImages.slice(0, 5).map((i) => ({ url: i.url, alt: i.alt || 'Photo IPJBU' }))
     : FALLBACK_SLIDES
 
-  // Photo for the "Nos valeurs" section: the 6th image, else the first
-  const valuesPhoto = libraryImages[5] ?? libraryImages[0]
+  // Photo for the "Nos valeurs" section: the 6th gallery image, else the first
+  const valuesPhoto = galleryImages[5] ?? galleryImages[0]
 
   useEffect(() => {
     setSlide(0)
@@ -91,12 +102,15 @@ export default function Home() {
       {/* ══ HERO ══ */}
       <section className="hero" aria-label="Bannière principale">
         {slides.map((s, i) => (
-          <div
+          <img
             key={s.url}
+            src={resized(s.url, 1600)}
+            srcSet={heroSrcSet(s.url)}
+            sizes="100vw"
+            alt={s.alt}
             className={`hero__bg${i === slide ? ' hero__bg--active' : ''}`}
-            style={{ backgroundImage: `url(${s.url})` }}
-            role="img"
-            aria-label={s.alt}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            decoding="async"
             aria-hidden={i !== slide}
           />
         ))}
