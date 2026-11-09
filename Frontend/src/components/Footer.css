@@ -1,43 +1,35 @@
-/* ══════════════════════════════════════════
-   Footer — couleurs du logo IPJBU
-   Fond vert foncé + bordure orange
-   ══════════════════════════════════════════ */
+/* ══ Footer compact — IPJBU – DUHINDURINGENDO ══ */
 
 .footer {
   background: var(--green-dark);
-  color: rgba(255,255,255,0.78);
-  font-size: 0.9rem;
-  border-top: 4px solid var(--orange);   /* anneau orange du logo */
+  color: rgba(255,255,255,0.75);
+  font-size: 0.85rem;
+  border-top: 3px solid var(--orange);
 }
 
-/* ── Top section grid ── */
-.footer__top {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-  padding-top: 3.5rem;
-  padding-bottom: 3rem;
+/* ── Main row ── */
+.footer__main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  align-items: flex-start;
+  padding-top: 1.75rem;
+  padding-bottom: 1.5rem;
 }
 
-@media (min-width: 640px) {
-  .footer__top { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 960px) {
-  .footer__top { grid-template-columns: 2.2fr 1fr 1.2fr; }
-}
+/* ── Brand ── */
+.footer__brand { flex: 0 0 auto; }
 
-/* ── Brand / logo ── */
 .footer__logo {
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0.6rem;
   text-decoration: none;
-  margin-bottom: 1rem;
 }
 
 .footer__logo-img {
-  height: 52px;
-  width:  52px;
+  height: 38px;
+  width:  38px;
   object-fit: contain;
   border-radius: 50%;
   border: 2px solid var(--orange);
@@ -45,14 +37,9 @@
   flex-shrink: 0;
 }
 
-.footer__logo-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
 .footer__logo-name {
-  font-size: 0.88rem;
+  display: block;
+  font-size: 0.78rem;
   font-weight: 900;
   color: var(--white);
   letter-spacing: 0.04em;
@@ -61,141 +48,86 @@
 }
 
 .footer__logo-sub {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.55);
-  line-height: 1.4;
-}
-
-/* Motto */
-.footer__motto {
+  display: block;
+  font-size: 0.7rem;
   font-style: italic;
   color: var(--orange);
-  font-size: 0.85rem;
-  margin-bottom: 1.25rem;
-  line-height: 1.5;
+  line-height: 1.4;
+  margin-top: 0.15rem;
 }
 
-/* Social icons */
-.footer__social {
+/* ── Nav links ── */
+.footer__nav {
+  flex: 1 1 200px;
   display: flex;
-  gap: 0.6rem;
-  margin-bottom: 1.25rem;
-}
-
-.footer__social-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.7);
-  transition: background 0.15s, color 0.15s;
-}
-
-.footer__social-link:hover {
-  background: var(--orange);
-  color: var(--white);
-}
-
-/* Donate button in footer */
-.footer__donate {
-  display: inline-block;
-  background: var(--orange);
-  color: var(--white);
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 0.55rem 1.3rem;
-  border-radius: var(--radius-pill);
-  text-decoration: none;
-  transition: background 0.15s;
-  margin-top: 0.25rem;
-}
-
-.footer__donate:hover {
-  background: var(--orange-dark);
-}
-
-/* ── Column headings ── */
-.footer__heading {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--orange);        /* orange logo pour les titres de colonne */
-  margin-bottom: 1.1rem;
-}
-
-/* ── Link lists ── */
-.footer__links {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.25rem;
+  align-content: flex-start;
 }
 
 .footer__link {
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.62);
+  font-size: 0.8rem;
   text-decoration: none;
-  font-size: 0.875rem;
-  transition: color 0.15s, padding-left 0.15s;
-}
-
-.footer__link:hover {
-  color: var(--white);
-  padding-left: 4px;
-}
-
-/* ── Address block ── */
-.footer__address {
-  font-style: normal;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  color: rgba(255,255,255,0.65);
-  font-size: 0.875rem;
-}
-
-.footer__address a {
-  color: rgba(255,255,255,0.65);
-  text-decoration: none;
+  white-space: nowrap;
   transition: color 0.15s;
 }
 
-.footer__address a:hover { color: var(--white); }
+.footer__link:hover { color: var(--white); }
+
+/* ── Contact column ── */
+.footer__contact {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.footer__contact-line {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.62);
+  line-height: 1.4;
+}
+
+.footer__contact-line a {
+  color: rgba(255,255,255,0.62);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.footer__contact-line a:hover { color: var(--white); }
 
 .footer__phone-label {
   color: var(--orange);
   font-weight: 600;
 }
 
-.footer__hours {
+/* Donate button */
+.footer__donate {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: var(--orange);
+  color: var(--white);
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.4);
-  font-style: italic;
-  margin-top: 0.2rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: background 0.15s;
+  width: fit-content;
 }
+.footer__donate:hover { background: var(--orange-dark); }
 
 /* ── Bottom bar ── */
 .footer__bottom {
-  border-top: 1px solid rgba(255,255,255,0.12);
-  padding-top: 1.25rem;
-  padding-bottom: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 0.75rem;
+  padding-bottom: 0.85rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  color: rgba(255,255,255,0.38);
-  font-size: 0.78rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem;
+  color: rgba(255,255,255,0.32);
+  font-size: 0.72rem;
 }
 
-.footer__bottom strong {
-  color: rgba(255,255,255,0.6);
-}
-
-@media (min-width: 640px) {
-  .footer__bottom {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-}
+.footer__bottom strong { color: rgba(255,255,255,0.5); }

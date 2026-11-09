@@ -24,11 +24,11 @@
   --orange:      #E8650A;   /* anneau orange logo   */
   --orange-dark: #B84D00;   /* hover / texte orange */
   --black:       #111111;
-  --text:        #162B1C;
-  --text-light:  #3A5C42;
-  --muted:       #7A9188;
+  --text:        #1A1A1A;
+  --text-light:  #555555;
+  --muted:       #888888;
   --white:       #ffffff;
-  --border:      #C8E8CE;
+  --border:      #E0E0E0;
 
   /* Pill radius — used on buttons and badges */
   --radius-pill: 100px;
@@ -101,11 +101,11 @@ button { cursor: pointer; font-family: inherit; }
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--green-mid);
+  color: var(--orange);
   margin-bottom: 0.6rem;
 }
 
-.section--green .section__label { color: var(--green-light); }
+.section--green .section__label { color: rgba(255,255,255,0.65); }
 
 .section__title {
   font-size: clamp(1.75rem, 4vw, 2.6rem);
@@ -182,7 +182,7 @@ h1, h2, h3, h4 {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--green-light);
+  color: rgba(255,255,255,0.65);
   margin-bottom: 0.75rem;
 }
 

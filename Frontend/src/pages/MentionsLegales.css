@@ -11,10 +11,10 @@
 .ml-block__title {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--green-dark);
+  color: var(--text);
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--green-light);
+  border-bottom: 2px solid var(--border);
 }
 
 .ml-block__subtitle {
@@ -57,7 +57,7 @@
 }
 
 .ml-table a {
-  color: var(--green);
+  color: var(--orange);
   text-decoration: underline;
 }
 

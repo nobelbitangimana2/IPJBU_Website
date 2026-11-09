@@ -40,15 +40,11 @@
 
 .ud__category {
   display: inline-block;
-  background: var(--green);
+  background: var(--orange);
   color: var(--white);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  padding: 0.25rem 0.65rem;
-  border-radius: 3px;
-  margin-bottom: 0.75rem;
+  font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.09em;
+  padding: 0.25rem 0.65rem; border-radius: 3px; margin-bottom: 0.75rem;
 }
 
 .ud__title {
@@ -86,16 +82,10 @@
 }
 
 .ud__breadcrumb a {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--green);
-  text-decoration: none;
-  transition: color 0.15s;
+  font-size: 0.85rem; font-weight: 600;
+  color: var(--orange); text-decoration: none; transition: color 0.15s;
 }
-
-.ud__breadcrumb a:hover {
-  color: var(--green-dark);
-}
+.ud__breadcrumb a:hover { color: var(--orange-dark); }
 
 .ud__text {
   display: flex;
@@ -179,17 +169,14 @@
 
 .ud__share-links a:hover,
 .ud__share-links button:hover {
-  border-color: var(--green);
-  color: var(--green);
+  border-color: var(--orange);
+  color: var(--orange);
 }
 
 .ud__share-message,
 .ud__facebook-follow {
-  display: block;
-  margin-top: 0.75rem;
-  color: var(--green);
-  font-size: 0.82rem;
-  font-weight: 600;
+  display: block; margin-top: 0.75rem;
+  color: var(--orange); font-size: 0.82rem; font-weight: 600;
 }
 
 .ud__facebook-follow {
@@ -198,16 +185,15 @@
 
 /* Sidebar */
 .ud__related {
-  border-top: 2px solid var(--green);
+  border-top: 2px solid var(--orange);
   padding-top: 1.5rem;
 }
 
 @media (min-width: 900px) {
   .ud__related {
     border-top: none;
-    border-left: 2px solid var(--green);
-    padding-top: 0;
-    padding-left: 2rem;
+    border-left: 2px solid var(--orange);
+    padding-top: 0; padding-left: 2rem;
   }
 }
 
@@ -237,7 +223,7 @@
 }
 
 .ud__related-card:hover {
-  background: var(--green-light);
+  background: #fff5ee;
 }
 
 .ud__related-img {
@@ -275,7 +261,7 @@
   width: 28px;
   height: 28px;
   border: 3px solid var(--border);
-  border-top-color: var(--green);
+  border-top-color: var(--orange);
   border-radius: 50%;
   animation: ud-spin 0.7s linear infinite;
   margin: 0 auto 0.75rem;

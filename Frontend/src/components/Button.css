@@ -35,20 +35,21 @@
 }
 
 .btn--secondary {
-  background: var(--green-dark);
+  background: #222222;
   color: var(--white);
-  border-color: var(--green-dark);
+  border-color: #222222;
 }
-.btn--secondary:hover { background: #0f4a20; border-color: #0f4a20; }
+.btn--secondary:hover { background: #000; border-color: #000; }
 
 .btn--outline {
   background: transparent;
-  color: var(--green-dark);
-  border-color: var(--green-dark);
+  color: var(--text);
+  border-color: #aaaaaa;
 }
 .btn--outline:hover {
-  background: var(--green-dark);
+  background: var(--text);
   color: var(--white);
+  border-color: var(--text);
 }
 
 /* Outlined white — for use on dark/photo backgrounds */
@@ -64,10 +65,10 @@
 
 .btn--ghost {
   background: transparent;
-  color: var(--green-dark);
+  color: var(--text);
   border-color: transparent;
 }
-.btn--ghost:hover { background: var(--green-light); }
+.btn--ghost:hover { background: #f0f0f0; }
 
 /* Modifiers */
 .btn--full    { width: 100%; }
