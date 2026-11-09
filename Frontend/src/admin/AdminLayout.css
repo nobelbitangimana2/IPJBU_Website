@@ -342,7 +342,7 @@
 .adm-select:focus,
 .adm-textarea:focus {
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+  box-shadow: 0 0 0 3px rgba(46,158,69,0.12);
 }
 
 .adm-input--error,

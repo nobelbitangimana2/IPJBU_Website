@@ -117,8 +117,8 @@
   width: 100%;
 }
 .cform-input:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232,101,10,0.12);
 }
 .cform-field--error .cform-input { border-color: #dc2626; }
 .cform-textarea { resize: vertical; min-height: 140px; }
@@ -139,3 +139,6 @@
 .contact__success-icon { font-size: 2.25rem; }
 .contact__success h3 { font-size: 1.15rem; font-weight: 800; color: var(--green-dark); }
 .contact__success p  { font-size: 0.9rem; color: var(--text-light); line-height: 1.65; }
+.contact__item-value a { color: var(--orange); }
+.contact__item-value a:hover { color: var(--orange-dark); }
+.contact__social-pill:hover { border-color: var(--orange); color: var(--orange); }

@@ -39,7 +39,7 @@ function heroSrcSet(url) {
 const FEATURES = [
   {
     icon: '🌱',
-    color: '#008a4a',
+    color: 'var(--green-dark)',
     panel: 'var(--green-light)',
     title: 'Formation agro-pastorale',
     desc:  'Nous formons les jeunes et les femmes vulnérables aux techniques agro-pastorales modernes pour renforcer leur autonomie et améliorer leur productivité.',
@@ -48,7 +48,7 @@ const FEATURES = [
   },
   {
     icon: '🛠️',
-    color: '#c26f00',
+    color: 'var(--orange)',
     panel: '#fff3dc',
     title: 'Équipement et intrants',
     desc:  'Distribution de semences sélectionnées et de bétail/volailles de qualité, accompagnée du renforcement des capacités en gestion des stocks et en conservation des récoltes.',
@@ -57,7 +57,7 @@ const FEATURES = [
   },
   {
     icon: '🏭',
-    color: '#008a4a',
+    color: 'var(--green-dark)',
     panel: 'var(--green-light)',
     title: 'Transformation agroalimentaire',
     desc:  'Mise en place de micro-unités de transformation agroalimentaire pour valoriser les productions locales et créer de la valeur ajoutée au sein des communautés.',
@@ -117,7 +117,7 @@ export default function Home() {
         <div className="hero__overlay" aria-hidden="true" />
 
         <div className="hero__content container">
-          <p className="hero__eyebrow">Organisation de la société civile burundaise</p>
+          <p className="hero__eyebrow">IPJBU – DUHINDURINGENDO &mdash; Organisation de la société civile burundaise</p>
           <h1 className="hero__title">
             Jeunesse Burundaise,<br />
             faisons la différence
@@ -173,7 +173,7 @@ export default function Home() {
               <span className="section__label">Nos valeurs</span>
               <h2 className="section__title">Ce qui guide<br />notre action</h2>
               <p className="commitment__intro">
-                L'IPJBU – DUHINDURINGENDO fonde son action sur quatre valeurs fondamentales
+              L&apos;IPJBU – DUHINDURINGENDO fonde son action sur quatre valeurs fondamentales
                 qui orientent chaque décision, de la formation sur le terrain aux partenariats stratégiques.
               </p>
               <Button to="/about" variant="outline">En savoir plus</Button>

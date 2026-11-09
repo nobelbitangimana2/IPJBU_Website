@@ -16,8 +16,8 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.news__filter-btn:hover { border-color: var(--green); color: var(--green); }
-.news__filter-btn--active { background: var(--green); color: #fff; border-color: var(--green); }
+.news__filter-btn:hover { border-color: var(--orange); color: var(--orange); }
+.news__filter-btn--active { background: var(--orange); color: #fff; border-color: var(--orange); }
 
 .news__loading,
 .news__empty {

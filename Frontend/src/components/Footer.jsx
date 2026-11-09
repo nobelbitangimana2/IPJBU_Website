@@ -4,12 +4,14 @@ import { useData } from '../store/DataContext'
 import './Footer.css'
 
 const QUICK_LINKS = [
-  { to: '/',            label: 'Accueil'     },
-  { to: '/about',       label: 'À propos'    },
-  { to: '/programmes',  label: 'Programmes'  },
-  { to: '/gallery',     label: 'Galerie'     },
-  { to: '/news',        label: 'Actualités'  },
-  { to: '/contact',     label: 'Contact'     },
+  { to: '/',              label: 'Accueil'       },
+  { to: '/about',         label: 'À propos'      },
+  { to: '/programmes',    label: 'Programmes'    },
+  { to: '/partners',      label: 'Partenaires'   },
+  { to: '/opportunities', label: 'Opportunités'  },
+  { to: '/gallery',       label: 'Galerie'       },
+  { to: '/news',          label: 'Actualités'    },
+  { to: '/contact',       label: 'Contact'       },
   { to: '/mentions-legales', label: 'Mentions légales' },
 ]
 
@@ -22,30 +24,34 @@ const SOCIAL_PATHS = {
 }
 
 export default function Footer() {
-  const year         = new Date().getFullYear()
-  const { contact }  = useData()
-  const socialLinks  = contact?.socialLinks ?? {}
-  const phones       = contact?.phones ?? []
+  const year        = new Date().getFullYear()
+  const { contact } = useData()
+  const socialLinks = contact?.socialLinks ?? {}
+  const phones      = contact?.phones ?? []
   const addressLines = contact?.address
     ? contact.address.split(',').map(l => l.trim()).filter(Boolean)
     : []
 
-  // Only show social icons for platforms with a URL
   const activeSocials = Object.entries(socialLinks).filter(([, url]) => url)
 
   return (
     <footer className="footer" role="contentinfo">
       <div className="footer__top container">
 
-        {/* Brand col */}
+        {/* ── Brand column ── */}
         <div className="footer__brand">
-          <Link to="/" className="footer__logo" aria-label="IPJBU – DUHINDURINGENDO Accueil">
+          <Link to="/" className="footer__logo" aria-label="IPJBU – DUHINDURINGENDO accueil">
             <img src="/IpjbuLogo.jpg" alt="Logo IPJBU – DUHINDURINGENDO" className="footer__logo-img" />
-            <span>IPJBU</span>
+            <div className="footer__logo-text">
+              <span className="footer__logo-name">IPJBU – DUHINDURINGENDO</span>
+              <span className="footer__logo-sub">Initiative pour l&apos;Autopromotion Socio-économique de la Jeunesse au Burundi</span>
+            </div>
           </Link>
-          <p className="footer__tagline">
-            Initiative pour l'Autopromotion Socio-économique de la Jeunesse au Burundi.
+
+          <p className="footer__motto">
+            &laquo;&nbsp;Jeunesse Burundaise, faisons la différence&nbsp;&raquo;
           </p>
+
           {activeSocials.length > 0 && (
             <div className="footer__social" aria-label="Réseaux sociaux">
               {activeSocials.map(([platform, url]) =>
@@ -53,9 +59,10 @@ export default function Footer() {
                   <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
                     aria-label={platform.charAt(0).toUpperCase() + platform.slice(1)}
                     className="footer__social-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                      fill="none" stroke="currentColor" strokeWidth="2"
-                      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      aria-hidden="true">
                       <path d={SOCIAL_PATHS[platform]} />
                     </svg>
                   </a>
@@ -63,19 +70,26 @@ export default function Footer() {
               )}
             </div>
           )}
+
+          {/* Donate CTA in footer */}
+          <Link to="/contact" className="footer__donate">
+            🤲 Faire un don
+          </Link>
         </div>
 
-        {/* Quick links */}
+        {/* ── Quick links ── */}
         <div className="footer__col">
-          <h4 className="footer__heading">Liens rapides</h4>
+          <h4 className="footer__heading">Navigation</h4>
           <ul className="footer__links">
             {QUICK_LINKS.map(({ to, label }) => (
-              <li key={to}><Link to={to} className="footer__link">{label}</Link></li>
+              <li key={to}>
+                <Link to={to} className="footer__link">{label}</Link>
+              </li>
             ))}
           </ul>
         </div>
 
-        {/* Contact */}
+        {/* ── Contact ── */}
         <div className="footer__col">
           <h4 className="footer__heading">Contact</h4>
           <address className="footer__address">
@@ -83,6 +97,7 @@ export default function Footer() {
               ? addressLines.map((line, i) => <p key={i}>{line}</p>)
               : contact?.address && <p>{contact.address}</p>
             }
+
             {/* phones array (new format) */}
             {phones.length > 0 && phones.map(({ label, number }) => (
               <p key={number}>
@@ -105,9 +120,16 @@ export default function Footer() {
 
       </div>
 
+      {/* ── Bottom bar ── */}
       <div className="footer__bottom container">
-        <p>&copy; {year} IPJBU – DUHINDURINGENDO. Tous droits réservés.</p>
-        <p>Association agréée par Ordonnance Ministérielle n° 530/1158 du 12/05/2025</p>
+        <p>
+          &copy; {year}&nbsp;
+          <strong>IPJBU – DUHINDURINGENDO</strong>.
+          Tous droits réservés.
+        </p>
+        <p>
+          Association agréée par Ordonnance Ministérielle n°&nbsp;530/1158 du 12/05/2025
+        </p>
       </div>
     </footer>
   )

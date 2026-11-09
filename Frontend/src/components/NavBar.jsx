@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import './NavBar.css'
 
+/* All main nav links — Actualités is now IN the nav bar */
 const NAV_LINKS = [
-  { to: '/',            label: 'Accueil',    end: true },
-  { to: '/about',       label: 'À propos'             },
-  { to: '/programmes',  label: 'Programmes'           },
-  { to: '/gallery',     label: 'Galerie'              },
-  { to: '/contact',     label: 'Contact'              },
+  { to: '/',              label: 'Accueil',      end: true },
+  { to: '/about',         label: 'À propos'               },
+  { to: '/programmes',    label: 'Programmes'             },
+  { to: '/partners',      label: 'Partenaires'            },
+  { to: '/opportunities', label: 'Opportunités'           },
+  { to: '/gallery',       label: 'Galerie'                },
+  { to: '/news',          label: 'Actualités'             },
+  { to: '/contact',       label: 'Contact'                },
 ]
 
 export default function NavBar() {
@@ -26,17 +30,21 @@ export default function NavBar() {
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`} role="banner">
       <div className="navbar__inner container">
 
-        {/* Logo */}
-        <Link to="/" className="navbar__logo" onClick={close} aria-label="IPJBU – DUHINDURINGENDO Accueil">
+        {/* ── Logo ── */}
+        <Link to="/" className="navbar__logo" onClick={close}
+          aria-label="IPJBU – DUHINDURINGENDO accueil">
           <img
             src="/IpjbuLogo.jpg"
             alt="Logo IPJBU – DUHINDURINGENDO"
             className="navbar__logo-img"
           />
-          <span className="navbar__logo-text">IPJBU</span>
+          <span className="navbar__logo-text">
+            <span className="navbar__logo-short">IPJBU</span>
+            <span className="navbar__logo-full">IPJBU – DUHINDURINGENDO</span>
+          </span>
         </Link>
 
-        {/* Desktop links */}
+        {/* ── Desktop nav links ── */}
         <nav className="navbar__links" aria-label="Navigation principale">
           {NAV_LINKS.map(({ to, label, end }) => (
             <NavLink
@@ -52,18 +60,14 @@ export default function NavBar() {
           ))}
         </nav>
 
-        {/* Desktop CTA */}
+        {/* ── Desktop CTA: Donate ── */}
         <div className="navbar__actions">
-          <NavLink
-            to="/news"
-            className={({ isActive }) => 'navbar__cta' + (isActive ? ' navbar__cta--active' : '')}
-            onClick={close}
-          >
-            Actualités
-          </NavLink>
+          <Link to="/contact" className="navbar__donate" onClick={close}>
+            🤲 Faire un don
+          </Link>
         </div>
 
-        {/* Hamburger */}
+        {/* ── Hamburger ── */}
         <button
           className={`navbar__hamburger${open ? ' navbar__hamburger--open' : ''}`}
           onClick={() => setOpen(o => !o)}
@@ -75,7 +79,7 @@ export default function NavBar() {
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* ── Mobile menu ── */}
       <nav
         id="mobile-menu"
         className={`navbar__mobile${open ? ' navbar__mobile--open' : ''}`}
@@ -95,13 +99,10 @@ export default function NavBar() {
             {label}
           </NavLink>
         ))}
-        <NavLink
-          to="/news"
-          className={({ isActive }) => 'navbar__mobile-cta' + (isActive ? ' navbar__mobile-cta--active' : '')}
-          onClick={close}
-        >
-          Actualités
-        </NavLink>
+        {/* Donate button at bottom of mobile menu */}
+        <Link to="/contact" className="navbar__mobile-donate" onClick={close}>
+          🤲 Faire un don
+        </Link>
       </nav>
     </header>
   )

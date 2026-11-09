@@ -56,7 +56,7 @@ export default function Programmes() {
 
       <div className="page-hero">
         <div className="container page-hero__inner">
-          <span className="page-hero__label">Nos activités</span>
+          <span className="page-hero__label">IPJBU – DUHINDURINGENDO</span>
           <h1 className="page-hero__title">Programmes</h1>
           <p className="page-hero__sub">
             Découvrez les cinq objectifs spécifiques de l&apos;IPJBU et les dix étapes

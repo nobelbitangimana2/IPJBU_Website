@@ -32,7 +32,7 @@ export default function About() {
       {/* Hero */}
       <div className="page-hero">
         <div className="container page-hero__inner">
-          <span className="page-hero__label">À propos de l'IPJBU</span>
+          <span className="page-hero__label">À propos de l&apos;IPJBU – DUHINDURINGENDO</span>
           <h1 className="page-hero__title">Qui sommes-nous&nbsp;?</h1>
           <p className="page-hero__sub">
             Une association burundaise agréée, dédiée à l'autopromotion de la jeunesse

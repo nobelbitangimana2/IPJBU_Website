@@ -1,96 +1,135 @@
-/* ── NavBar — black background ── */
+/* ══════════════════════════════════════════
+   NavBar — couleurs tirées du logo IPJBU
+   Fond : vert foncé #1B6B2F  |  Accent orange #E8650A
+   ══════════════════════════════════════════ */
+
 .navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: var(--black);
+  background: var(--green-dark);           /* ruban vert du logo */
   height: var(--nav-height);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 3px solid var(--orange);  /* anneau orange du logo */
   transition: box-shadow 0.2s;
 }
 
 .navbar--scrolled {
-  box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 3px 24px rgba(0,0,0,0.35);
 }
 
 .navbar__inner {
   height: 100%;
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
-/* Logo */
+/* ── Logo ── */
 .navbar__logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   text-decoration: none;
   flex-shrink: 0;
 }
 
 .navbar__logo-img {
-  height: 40px;
-  width: auto;
+  height: 44px;
+  width: 44px;
   object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid var(--orange);
+  background: var(--white);
   display: block;
 }
 
 .navbar__logo-text {
-  font-size: 1.2rem;
-  font-weight: 900;
-  color: var(--white);
-  letter-spacing: 0.02em;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
 }
 
-/* Desktop nav */
+/* Short version always visible */
+.navbar__logo-short {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Full name — hidden on small screens, shown ≥ 1100px */
+.navbar__logo-full {
+  display: none;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (min-width: 1100px) {
+  .navbar__logo-short { display: none; }
+  .navbar__logo-full  { display: block; }
+}
+
+/* ── Desktop nav links ── */
 .navbar__links {
   display: none;
   align-items: center;
-  gap: 0.1rem;
+  gap: 0;
   margin-left: auto;
+  flex-wrap: nowrap;
 }
 
 .navbar__link {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: rgba(255,255,255,0.75);
-  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.82);
+  padding: 0.4rem 0.7rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
 }
 
 .navbar__link:hover {
   color: var(--white);
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.12);
 }
 
 .navbar__link--active {
   color: var(--white);
-  font-weight: 700;
-  background: var(--green);
+  font-weight: 800;
+  background: var(--orange);         /* orange actif = anneau logo */
 }
 
-/* CTA pill */
-.navbar__actions { display: none; flex-shrink: 0; }
+/* ── Donate CTA ── */
+.navbar__actions {
+  display: none;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
 
-.navbar__cta {
-  background: var(--green);
+.navbar__donate {
+  background: var(--orange);
   color: var(--white);
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.5rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.5rem 1.15rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
-  transition: background 0.15s;
   white-space: nowrap;
+  border: 2px solid transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.navbar__cta:hover { background: var(--green-mid); }
-.navbar__cta--active { background: var(--green-mid); }
+.navbar__donate:hover {
+  background: var(--orange-dark);
+}
 
-/* Hamburger */
+/* ── Hamburger ── */
 .navbar__hamburger {
   display: flex;
   flex-direction: column;
@@ -117,53 +156,62 @@
 .navbar__hamburger--open span:nth-child(2) { opacity: 0; }
 .navbar__hamburger--open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Mobile menu */
+/* ── Mobile drawer ── */
 .navbar__mobile {
   display: flex;
   flex-direction: column;
-  background: var(--black);
-  border-top: 1px solid rgba(255,255,255,0.08);
+  background: var(--green-dark);
+  border-top: 2px solid var(--orange);
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: max-height 0.35s ease;
 }
 
-.navbar__mobile--open { max-height: 460px; }
+.navbar__mobile--open { max-height: 600px; }
 
 .navbar__mobile-link {
-  color: rgba(255,255,255,0.75);
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.9rem 1.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.82);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
 
-.navbar__mobile-link:hover,
-.navbar__mobile-link--active {
-  background: rgba(255,255,255,0.07);
+.navbar__mobile-link:hover {
+  background: rgba(255,255,255,0.08);
   color: var(--white);
 }
 
-.navbar__mobile-cta {
+.navbar__mobile-link--active {
+  background: var(--orange);
+  color: var(--white);
+  font-weight: 800;
+}
+
+/* Mobile Donate button */
+.navbar__mobile-donate {
   margin: 1rem 1.5rem 1.25rem;
   text-align: center;
-  background: var(--green);
+  background: var(--orange);
   color: var(--white);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.95rem;
   padding: 0.75rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   transition: background 0.15s;
 }
 
-.navbar__mobile-cta:hover { background: var(--green-mid); }
-.navbar__mobile-cta--active { background: var(--green-mid); }
+.navbar__mobile-donate:hover {
+  background: var(--orange-dark);
+}
 
+/* ── Responsive breakpoint ── */
 @media (min-width: 900px) {
-  .navbar__links   { display: flex; }
-  .navbar__actions { display: flex; }
+  .navbar__links    { display: flex; }
+  .navbar__actions  { display: flex; }
   .navbar__hamburger { display: none; }
   .navbar__mobile    { display: none !important; }
 }

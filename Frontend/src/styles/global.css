@@ -1,18 +1,11 @@
 /* =============================================
    IPJBU – DUHINDURINGENDO Global Styles
-   Palette:
-     --green-dark:   #005f33  (vert foncé — hero, footer, sections sombres)
-     --green:        #00A859  (vert marque principale)
-     --green-mid:    #2fbf71  (survol, accents)
-     --green-light:  #e0f6ea  (teinte légère)
-     --cream:        #fff8ef  (fond section alternée)
-     --orange:       #F28C00  (accents / CTA)
-     --black:        #111111  (nav admin)
-     --text:         #1a2e1f  (texte corps)
-     --text-light:   #3d5c47  (texte secondaire)
-     --muted:        #7a9188  (tertiaire / placeholders)
-     --white:        #ffffff
-     --border:       #d9eddf
+   Palette extraite du logo officiel :
+     Anneau orange  → #E8650A (bordure extérieure)
+     Ruban vert     → #1B6B2F (vert foncé, ruban du bas)
+     Vert vif       → #2E9E45 (vert lumineux du logo)
+     Vert clair     → #D6F0DB (teinte douce)
+     Orange foncé   → #B84D00 (hover / texte sur orange)
    ============================================= */
 
 *, *::before, *::after {
@@ -22,18 +15,20 @@
 }
 
 :root {
-  --green-dark:  #005f33;
-  --green:       #00A859;
-  --green-mid:   #2fbf71;
-  --green-light: #e0f6ea;
-  --cream:       #fff8ef;
-  --orange:      #F28C00;
+  /* ── Couleurs du logo ── */
+  --green-dark:  #1B6B2F;   /* vert foncé du ruban  */
+  --green:       #2E9E45;   /* vert vif du cercle   */
+  --green-mid:   #3DB558;   /* hover / accents      */
+  --green-light: #D6F0DB;   /* teinte très douce    */
+  --cream:       #FFF8EF;   /* fond alterné chaud   */
+  --orange:      #E8650A;   /* anneau orange logo   */
+  --orange-dark: #B84D00;   /* hover / texte orange */
   --black:       #111111;
-  --text:        #1a2e1f;
-  --text-light:  #3d5c47;
-  --muted:       #7a9188;
+  --text:        #162B1C;
+  --text-light:  #3A5C42;
+  --muted:       #7A9188;
   --white:       #ffffff;
-  --border:      #d9eddf;
+  --border:      #C8E8CE;
 
   /* Pill radius — used on buttons and badges */
   --radius-pill: 100px;
@@ -44,8 +39,8 @@
   --shadow:      0 4px 16px rgba(0,0,0,0.08);
   --shadow-lg:   0 8px 32px rgba(0,0,0,0.12);
 
-  --nav-height:  72px;
-  --max-width:   1200px;
+  --nav-height:  68px;
+  --max-width:   1280px;
   --section-v:   88px;
 }
 
