@@ -1,7 +1,7 @@
-/* ══════════════════════════════════════════
+/* ══════════════════════════════════════════════════════
    NavBar — IPJBU – DUHINDURINGENDO
-   Fond vert foncé #1B6B2F  |  Accent orange #E8650A
-   ══════════════════════════════════════════ */
+   Vert foncé  #1B6B2F  |  Orange  #E8650A
+   ══════════════════════════════════════════════════════ */
 
 .navbar {
   position: fixed;
@@ -20,10 +20,10 @@
   height: var(--nav-height);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
-/* ─────────────────── Logo ─────────────────── */
+/* ─────────────── Logo ─────────────── */
 .navbar__logo {
   display: flex;
   align-items: center;
@@ -34,13 +34,12 @@
 }
 
 .navbar__logo-img {
-  height: 40px;
-  width:  40px;
+  height: 42px;
+  width:  42px;
   object-fit: contain;
   border-radius: 50%;
   border: 2px solid var(--orange);
   background: var(--white);
-  display: block;
 }
 
 .navbar__logo-text {
@@ -49,7 +48,6 @@
   line-height: 1.1;
 }
 
-/* Short name — default */
 .navbar__logo-short {
   font-size: 1rem;
   font-weight: 900;
@@ -58,7 +56,6 @@
   text-transform: uppercase;
 }
 
-/* Full name — shown only on very wide screens */
 .navbar__logo-full {
   display: none;
   font-size: 0.58rem;
@@ -69,31 +66,36 @@
   white-space: nowrap;
 }
 
-@media (min-width: 1300px) {
+@media (min-width: 1280px) {
   .navbar__logo-short { display: none; }
   .navbar__logo-full  { display: block; }
 }
 
-/* ─────────────────── Desktop links ─────────────────── */
+/* ─────────────── Desktop nav row ─────────────── */
 .navbar__links {
   display: none;
   align-items: center;
-  flex: 1;                   /* take available space */
-  justify-content: center;   /* centre all 8 links */
-  flex-wrap: nowrap;
   gap: 0;
-  overflow: hidden;
+  flex: 1;
 }
 
+/* Shared link style */
 .navbar__link {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.82);
-  padding: 0.38rem 0.6rem;
+  padding: 0.4rem 0.85rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
   transition: color 0.15s, background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .navbar__link:hover {
@@ -107,19 +109,107 @@
   background: var(--orange);
 }
 
-/* ─────────────────── Donate CTA ─────────────────── */
+/* ─────────────── "Menu" dropdown button + panel ─────────────── */
+.navbar__dropdown {
+  position: relative;
+}
+
+.navbar__menu-btn {
+  /* inherits .navbar__link styles */
+}
+
+.navbar__chevron {
+  font-size: 0.6rem;
+  opacity: 0.7;
+  transition: transform 0.2s;
+}
+
+.navbar__dropdown--open .navbar__chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* Panel */
+.navbar__dropdown-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 200px;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--orange);
+  display: flex;
+  flex-direction: column;
+  padding: 0.4rem 0;
+  /* hidden by default */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-6px);
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 100;
+}
+
+/* Arrow caret above panel */
+.navbar__dropdown-panel::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid var(--orange);
+}
+
+.navbar__dropdown--open .navbar__dropdown-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Individual dropdown items */
+.navbar__dropdown-link {
+  display: block;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s, padding-left 0.12s;
+  border-left: 3px solid transparent;
+}
+
+.navbar__dropdown-link:hover {
+  background: var(--green-light);
+  color: var(--green-dark);
+  padding-left: 1.55rem;
+  border-left-color: var(--orange);
+}
+
+.navbar__dropdown-link--active {
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-weight: 800;
+  border-left-color: var(--orange);
+  padding-left: 1.55rem;
+}
+
+/* ─────────────── Donate CTA ─────────────── */
 .navbar__actions {
   display: none;
   flex-shrink: 0;
-  margin-left: 0.5rem;
+  margin-left: auto;
 }
 
 .navbar__donate {
   background: var(--orange);
   color: var(--white);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  padding: 0.48rem 1rem;
+  padding: 0.5rem 1.1rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   white-space: nowrap;
@@ -130,7 +220,7 @@
   background: var(--orange-dark);
 }
 
-/* ─────────────────── Hamburger ─────────────────── */
+/* ─────────────── Hamburger ─────────────── */
 .navbar__hamburger {
   display: flex;
   flex-direction: column;
@@ -158,7 +248,7 @@
 .navbar__hamburger--open span:nth-child(2) { opacity: 0; }
 .navbar__hamburger--open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ─────────────────── Mobile drawer ─────────────────── */
+/* ─────────────── Mobile drawer ─────────────── */
 .navbar__mobile {
   display: flex;
   flex-direction: column;
@@ -169,16 +259,16 @@
   transition: max-height 0.35s ease;
 }
 
-.navbar__mobile--open { max-height: 640px; }
+.navbar__mobile--open { max-height: 680px; }
 
 .navbar__mobile-link {
   color: rgba(255, 255, 255, 0.82);
   font-size: 0.95rem;
   font-weight: 600;
-  padding: 0.85rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.82rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   text-decoration: none;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.12s, color 0.12s;
 }
 
 .navbar__mobile-link:hover {
@@ -192,6 +282,31 @@
   font-weight: 800;
 }
 
+/* Sub-links indented under the divider */
+.navbar__mobile-link--sub {
+  padding-left: 2.25rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar__mobile-link--sub.navbar__mobile-link--active {
+  background: rgba(232, 101, 10, 0.85);
+  color: var(--white);
+}
+
+/* "Menu" section divider label */
+.navbar__mobile-divider {
+  padding: 0.55rem 1.5rem 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 0.25rem;
+}
+
+/* Donate in mobile drawer */
 .navbar__mobile-donate {
   margin: 1rem 1.5rem 1.25rem;
   text-align: center;
@@ -209,23 +324,10 @@
   background: var(--orange-dark);
 }
 
-/* ─────────────────── Breakpoints ─────────────────── */
-
-/* ≥ 900px: show the 8 desktop links + donate button */
-@media (min-width: 900px) {
-  .navbar__links    { display: flex; }
-  .navbar__actions  { display: flex; }
+/* ─────────────── Breakpoints ─────────────── */
+@media (min-width: 860px) {
+  .navbar__links     { display: flex; }
+  .navbar__actions   { display: flex; }
   .navbar__hamburger { display: none; }
   .navbar__mobile    { display: none !important; }
-}
-
-/* ≥ 1060px: slightly more breathing room per link */
-@media (min-width: 1060px) {
-  .navbar__link { font-size: 0.82rem; padding: 0.4rem 0.75rem; }
-}
-
-/* ≥ 1200px: full comfort */
-@media (min-width: 1200px) {
-  .navbar__link   { font-size: 0.85rem; padding: 0.42rem 0.9rem; }
-  .navbar__donate { font-size: 0.85rem; padding: 0.52rem 1.2rem; }
 }

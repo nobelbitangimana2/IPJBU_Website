@@ -73,7 +73,7 @@ export default function Footer() {
 
           {/* Donate CTA in footer */}
           <Link to="/contact" className="footer__donate">
-            🤲 Faire un don
+            Faire un don
           </Link>
         </div>
 
