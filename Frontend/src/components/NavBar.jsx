@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
+import { useLang } from '../store/LangContext'
 import './NavBar.css'
 
 /* ── Always-visible top-level links ── */
@@ -22,6 +23,7 @@ export default function NavBar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropOpen,   setDropOpen]   = useState(false)
   const [scrolled,   setScrolled]   = useState(false)
+  const { lang, toggle: toggleLang } = useLang()
   const dropRef  = useRef(null)
   const location = useLocation()
 
@@ -127,8 +129,16 @@ export default function NavBar() {
 
         </nav>
 
-        {/* ── Donate CTA ── */}
+        {/* ── Desktop actions: Lang switcher + Donate ── */}
         <div className="navbar__actions">
+          <button
+            className="navbar__lang"
+            onClick={toggleLang}
+            aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
+            title={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
+          >
+            {lang === 'fr' ? 'EN' : 'FR'}
+          </button>
           <Link to="/contact" className="navbar__donate" onClick={closeAll}>
             Faire un don
           </Link>
@@ -174,9 +184,18 @@ export default function NavBar() {
           </NavLink>
         ))}
 
-        <Link to="/contact" className="navbar__mobile-donate" onClick={closeAll}>
-          Faire un don
-        </Link>
+        <div className="navbar__mobile-bottom">
+          <button
+            className="navbar__mobile-lang"
+            onClick={toggleLang}
+            aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
+          >
+            {lang === 'fr' ? '🌐 EN' : '🌐 FR'}
+          </button>
+          <Link to="/contact" className="navbar__mobile-donate" onClick={closeAll}>
+            Faire un don
+          </Link>
+        </div>
       </nav>
     </header>
   )

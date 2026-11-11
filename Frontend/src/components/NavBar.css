@@ -200,8 +200,31 @@
 /* ─────────────── Donate CTA ─────────────── */
 .navbar__actions {
   display: none;
+  align-items: center;
+  gap: 0.5rem;
   flex-shrink: 0;
   margin-left: auto;
+}
+
+/* Language switcher */
+.navbar__lang {
+  background: rgba(255,255,255,0.12);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.navbar__lang:hover {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.6);
 }
 
 .navbar__donate {
@@ -307,8 +330,34 @@
 }
 
 /* Donate in mobile drawer */
-.navbar__mobile-donate {
+.navbar__mobile-bottom {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   margin: 1rem 1.5rem 1.25rem;
+}
+
+.navbar__mobile-lang {
+  background: rgba(255,255,255,0.12);
+  color: var(--white);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.navbar__mobile-lang:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+.navbar__mobile-donate {
+  flex: 1;
   text-align: center;
   background: var(--orange);
   color: var(--white);
