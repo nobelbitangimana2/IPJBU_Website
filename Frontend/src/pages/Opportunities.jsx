@@ -1,174 +1,82 @@
 import React, { useState } from 'react'
 import Button from '../components/Button'
+import { useLang } from '../store/LangContext'
 import './Opportunities.css'
 
-/* ─────────────────────────────────────────────────────────────
-   OPPORTUNITÉS — IPJBU – DUHINDURINGENDO
-   Two sections:
-     1. Documents officiels (PDFs, forms, reports to download)
-     2. Offres d'emploi / bénévolat
-   Both sections are currently static placeholders.
-   An admin can upload real documents & job posts via the
-   admin panel (section à connecter à l'API ultérieurement).
-───────────────────────────────────────────────────────────── */
-
-/* ── Static sample documents ─────────────────────────────── */
-const DOCUMENTS = [
-  {
-    id: 'd1',
-    title: 'Statuts de l\'association IPJBU – DUHINDURINGENDO',
-    category: 'Juridique',
-    description: 'Document officiel des statuts de l\'association tels qu\'approuvés par l\'Ordonnance Ministérielle n° 530/1158 du 12/05/2025.',
-    fileType: 'PDF',
-    available: false,   // set true + add fileUrl when document is ready
-    fileUrl: null,
-  },
-  {
-    id: 'd2',
-    title: 'Formulaire d\'adhésion',
-    category: 'Adhésion',
-    description: 'Formulaire à remplir pour rejoindre l\'IPJBU – DUHINDURINGENDO en tant que membre adhérent, fondateur ou sympathisant.',
-    fileType: 'PDF',
-    available: false,
-    fileUrl: null,
-  },
-  {
-    id: 'd3',
-    title: 'Rapport d\'activités annuel',
-    category: 'Rapport',
-    description: 'Rapport annuel présentant les activités réalisées, les bénéficiaires atteints et les résultats obtenus par l\'IPJBU – DUHINDURINGENDO.',
-    fileType: 'PDF',
-    available: false,
-    fileUrl: null,
-  },
-  {
-    id: 'd4',
-    title: 'Programme de formation agro-pastorale',
-    category: 'Formation',
-    description: 'Présentation détaillée du programme de formation aux techniques agro-pastorales destiné aux jeunes et femmes vulnérables.',
-    fileType: 'PDF',
-    available: false,
-    fileUrl: null,
-  },
-  {
-    id: 'd5',
-    title: 'Guide de candidature partenariat',
-    category: 'Partenariat',
-    description: 'Procédure et formulaire pour les organisations souhaitant établir un partenariat avec l\'IPJBU – DUHINDURINGENDO.',
-    fileType: 'PDF',
-    available: false,
-    fileUrl: null,
-  },
+const DOCUMENTS_FR = [
+  { id: 'd1', title: "Statuts de l'association IPJBU", category: 'Juridique', description: "Document officiel des statuts de l'association approuves par l'Ordonnance Ministerielle n 530/1158 du 12/05/2025.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd2', title: "Formulaire d'adhesion",          category: 'Adhesion',  description: "Formulaire a remplir pour rejoindre l'IPJBU en tant que membre adherent, fondateur ou sympathisant.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd3', title: "Rapport d'activites annuel",     category: 'Rapport',   description: "Rapport annuel presentant les activites realisees, les beneficiaires atteints et les resultats obtenus.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd4', title: "Programme de formation agro-pastorale", category: 'Formation', description: "Presentation detaillee du programme de formation aux techniques agro-pastorales.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd5', title: "Guide de candidature partenariat", category: 'Partenariat', description: "Procedure et formulaire pour les organisations souhaitant etablir un partenariat avec l'IPJBU.", fileType: 'PDF', available: false, fileUrl: null },
 ]
 
-/* ── Category filter pills ── */
-const DOC_CATS = ['Tous', ...new Set(DOCUMENTS.map(d => d.category))]
-
-/* ── Static job / volunteer listings ─────────────────────── */
-const JOBS = [
-  {
-    id: 'j1',
-    title: 'Formateur·trice en techniques agro-pastorales',
-    type: 'Bénévolat',
-    location: 'Gitega, Burundi',
-    deadline: null,
-    description: 'L\'IPJBU – DUHINDURINGENDO recherche des formateurs bénévoles disposant d\'une expérience en agriculture, élevage ou agro-écologie pour animer des sessions de formation auprès des bénéficiaires.',
-    requirements: [
-      'Formation en agronomie, élevage ou domaine connexe',
-      'Expérience de terrain en milieu rural burundais',
-      'Capacité à animer et former des groupes',
-      'Disponibilité régulière',
-    ],
-    contactEmail: null,
-    active: true,
-  },
-  {
-    id: 'j2',
-    title: 'Chargé·e de communication et réseaux sociaux',
-    type: 'Bénévolat',
-    location: 'Télétravail / Gitega',
-    deadline: null,
-    description: 'Appui à la communication externe de l\'IPJBU – DUHINDURINGENDO : rédaction de contenus, gestion des réseaux sociaux, mise à jour du site web.',
-    requirements: [
-      'Maîtrise du français (écrit)',
-      'Expérience en communication digitale',
-      'Connaissance des outils de création graphique (Canva, etc.)',
-      'Motivation pour la cause de la jeunesse burundaise',
-    ],
-    contactEmail: null,
-    active: true,
-  },
-  {
-    id: 'j3',
-    title: 'Coordinateur·trice de projet',
-    type: 'Emploi',
-    location: 'Gitega, Burundi',
-    deadline: null,
-    description: 'Sous la supervision du Comité Exécutif, le·la coordinateur·trice de projet sera responsable de la planification, du suivi et de l\'évaluation des activités de terrain de l\'IPJBU – DUHINDURINGENDO.',
-    requirements: [
-      'Diplôme en gestion de projet, développement rural ou équivalent',
-      'Expérience en gestion de projets de développement',
-      'Maîtrise du français ; le kirundi est un atout',
-      'Connaissance du secteur agro-pastoral burundais',
-    ],
-    contactEmail: null,
-    active: false,   // pas encore actif
-  },
+const DOCUMENTS_EN = [
+  { id: 'd1', title: "IPJBU Association statutes",   category: 'Legal',       description: "Official statutes approved by Ministerial Ordinance no. 530/1158 of 12/05/2025.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd2', title: "Membership application form",  category: 'Membership',  description: "Form to complete to join IPJBU as a member, founder or supporter.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd3', title: "Annual activity report",       category: 'Report',      description: "Annual report presenting activities carried out, beneficiaries reached and results achieved.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd4', title: "Agro-pastoral training programme", category: 'Training', description: "Detailed presentation of the agro-pastoral techniques training programme.", fileType: 'PDF', available: false, fileUrl: null },
+  { id: 'd5', title: "Partnership application guide", category: 'Partnership', description: "Procedure and form for organisations wishing to establish a partnership with IPJBU.", fileType: 'PDF', available: false, fileUrl: null },
 ]
 
-/* ── type badge colors ── */
+const JOBS_FR = [
+  { id: 'j1', title: 'Formateur·trice en techniques agro-pastorales', type: 'Benevolat', location: 'Gitega, Burundi', deadline: null, description: "L'IPJBU recherche des formateurs benevoles disposant d'une experience en agriculture, elevage ou agro-ecologie.", requirements: ['Formation en agronomie, elevage ou domaine connexe', 'Experience de terrain en milieu rural burundais', 'Capacite a animer et former des groupes', 'Disponibilite reguliere'], contactEmail: null, active: true },
+  { id: 'j2', title: 'Charge·e de communication et reseaux sociaux',  type: 'Benevolat', location: 'Teletravail / Gitega', deadline: null, description: "Appui a la communication externe de l'IPJBU : redaction de contenus, gestion des reseaux sociaux, mise a jour du site web.", requirements: ['Maitrise du francais (ecrit)', 'Experience en communication digitale', 'Connaissance des outils de creation graphique', 'Motivation pour la cause de la jeunesse burundaise'], contactEmail: null, active: true },
+]
+
+const JOBS_EN = [
+  { id: 'j1', title: 'Agro-pastoral training facilitator', type: 'Volunteer', location: 'Gitega, Burundi', deadline: null, description: "IPJBU is looking for volunteer trainers with experience in agriculture, livestock or agro-ecology.", requirements: ['Degree in agronomy, livestock or related field', 'Field experience in rural Burundi', 'Ability to facilitate and train groups', 'Regular availability'], contactEmail: null, active: true },
+  { id: 'j2', title: 'Communication & social media officer',   type: 'Volunteer', location: 'Remote / Gitega', deadline: null, description: "Support IPJBU's external communication: content writing, social media management, website updates.", requirements: ['Good written French (English a plus)', 'Digital communication experience', 'Knowledge of graphic design tools', 'Commitment to Burundian youth causes'], contactEmail: null, active: true },
+]
+
 const TYPE_COLORS = {
-  'Bénévolat': { bg: 'var(--green-light)', color: 'var(--green-dark)' },
-  'Emploi':    { bg: '#fff3dc',            color: '#7a3d00'            },
-  'Stage':     { bg: '#e8f0fe',            color: '#1a3a8f'            },
+  'Benevolat': { bg: '#fff5ee', color: '#7a3d00' },
+  'Volunteer': { bg: '#fff5ee', color: '#7a3d00' },
+  'Emploi':    { bg: '#e8f0fe', color: '#1a3a8f' },
+  'Job':       { bg: '#e8f0fe', color: '#1a3a8f' },
 }
 
 export default function Opportunities() {
-  const [docFilter, setDocFilter] = useState('Tous')
+  const { t, lang }     = useLang()
+  const [docFilter, setDocFilter] = useState('all')
   const [expanded,  setExpanded]  = useState(null)
 
-  const visibleDocs = docFilter === 'Tous'
-    ? DOCUMENTS
-    : DOCUMENTS.filter(d => d.category === docFilter)
+  const documents  = lang === 'fr' ? DOCUMENTS_FR : DOCUMENTS_EN
+  const jobs       = lang === 'fr' ? JOBS_FR       : JOBS_EN
+  const activeJobs = jobs.filter(j => j.active)
 
-  const activeJobs = JOBS.filter(j => j.active)
+  const allLabel   = lang === 'fr' ? 'Tous' : 'All'
+  const docCats    = [allLabel, ...new Set(documents.map(d => d.category))]
+
+  const visibleDocs = docFilter === 'all' || docFilter === allLabel
+    ? documents
+    : documents.filter(d => d.category === docFilter)
 
   return (
     <div className="opp-page">
 
-      {/* ── Page hero ── */}
       <div className="page-hero">
         <div className="container page-hero__inner">
           <span className="page-hero__label">IPJBU – DUHINDURINGENDO</span>
-          <h1 className="page-hero__title">Opportunités</h1>
-          <p className="page-hero__sub">
-            Téléchargez nos documents officiels et découvrez les postes ouverts
-            pour rejoindre l&apos;équipe de l&apos;IPJBU – DUHINDURINGENDO.
-          </p>
+          <h1 className="page-hero__title">{t('opp.hero.title')}</h1>
+          <p className="page-hero__sub">{t('opp.hero.sub')}</p>
         </div>
       </div>
 
-      {/* ══ SECTION 1 — Documents ══════════════════════════════ */}
-      <section className="section section--white" aria-label="Documents officiels">
+      {/* Documents */}
+      <section className="section section--white">
         <div className="container">
           <div className="section__header">
-            <span className="section__label">Ressources</span>
-            <h2 className="section__title">Documents officiels</h2>
-            <p className="section__subtitle">
-              Formulaires, rapports et documents institutionnels de
-              l&apos;IPJBU – DUHINDURINGENDO disponibles en téléchargement.
-            </p>
+            <span className="section__label">{t('opp.docs.label')}</span>
+            <h2 className="section__title">{t('opp.docs.title')}</h2>
           </div>
 
-          {/* Category filter */}
-          <div className="opp__filters" role="group" aria-label="Filtrer les documents">
-            {DOC_CATS.map(cat => (
-              <button
-                key={cat}
-                className={`opp__filter-btn${docFilter === cat ? ' opp__filter-btn--active' : ''}`}
-                onClick={() => setDocFilter(cat)}
-                aria-pressed={docFilter === cat}
-              >
+          <div className="opp__filters" role="group">
+            {docCats.map(cat => (
+              <button key={cat}
+                className={`opp__filter-btn${(docFilter === 'all' && cat === allLabel) || docFilter === cat ? ' opp__filter-btn--active' : ''}`}
+                onClick={() => setDocFilter(cat === allLabel ? 'all' : cat)}
+                aria-pressed={(docFilter === 'all' && cat === allLabel) || docFilter === cat}>
                 {cat}
               </button>
             ))}
@@ -185,121 +93,82 @@ export default function Opportunities() {
                 <p className="opp-doc-card__desc">{doc.description}</p>
                 <div className="opp-doc-card__footer">
                   {doc.available && doc.fileUrl ? (
-                    <a
-                      href={doc.fileUrl}
-                      download
-                      className="opp-doc-card__btn opp-doc-card__btn--download"
-                      aria-label={`Télécharger : ${doc.title}`}
-                    >
-                      ⬇ Télécharger
+                    <a href={doc.fileUrl} download className="opp-doc-card__btn opp-doc-card__btn--download">
+                      ⬇ {t('opp.download')}
                     </a>
                   ) : (
-                    <span className="opp-doc-card__soon">
-                      📋 Bientôt disponible
-                    </span>
+                    <span className="opp-doc-card__soon">📋 {t('opp.soon')}</span>
                   )}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Upload note */}
           <div className="opp__upload-note">
             <span aria-hidden="true">📤</span>
             <p>
-              Vous souhaitez soumettre un document à l&apos;IPJBU – DUHINDURINGENDO&nbsp;?
-              Envoyez-le directement via notre{' '}
-              <a href="/contact" className="opp__upload-link">formulaire de contact</a>.
+              {lang === 'fr'
+                ? "Vous souhaitez soumettre un document a l'IPJBU ? Envoyez-le via notre "
+                : "Want to submit a document to IPJBU? Send it via our "}
+              <a href="/contact" className="opp__upload-link">
+                {lang === 'fr' ? 'formulaire de contact' : 'contact form'}
+              </a>.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ══ SECTION 2 — Offres d'emploi / bénévolat ══════════ */}
-      <section className="section section--cream" aria-label="Offres d'emploi et bénévolat">
+      {/* Jobs */}
+      <section className="section section--cream">
         <div className="container">
           <div className="section__header">
-            <span className="section__label">Rejoindre l&apos;équipe</span>
-            <h2 className="section__title">Offres d&apos;emploi &amp; bénévolat</h2>
-            <p className="section__subtitle">
-              Contribuez à la mission de l&apos;IPJBU – DUHINDURINGENDO en intégrant
-              notre équipe de terrain ou de gestion.
-            </p>
+            <span className="section__label">{t('opp.jobs.label')}</span>
+            <h2 className="section__title">{t('opp.jobs.title')}</h2>
           </div>
 
           {activeJobs.length === 0 ? (
             <div className="opp__no-jobs">
               <span className="opp__no-jobs-icon" aria-hidden="true">📭</span>
-              <h3>Aucune offre active pour le moment</h3>
-              <p>
-                Revenez bientôt ou contactez-nous pour nous envoyer une candidature spontanée.
-              </p>
-              <Button to="/contact" variant="outline">Candidature spontanée</Button>
+              <h3>{lang === 'fr' ? 'Aucune offre active pour le moment' : 'No active openings at this time'}</h3>
+              <p>{lang === 'fr' ? 'Revenez bientot ou envoyez une candidature spontanee.' : 'Check back soon or send a spontaneous application.'}</p>
+              <Button to="/contact" variant="outline">
+                {lang === 'fr' ? 'Candidature spontanee' : 'Spontaneous application'}
+              </Button>
             </div>
           ) : (
             <div className="opp__job-list">
               {activeJobs.map(job => {
                 const isOpen = expanded === job.id
-                const badge  = TYPE_COLORS[job.type] ?? TYPE_COLORS['Stage']
+                const badge  = TYPE_COLORS[job.type] ?? { bg: '#f5f5f5', color: '#333' }
                 return (
                   <div key={job.id} className={`opp-job-card${isOpen ? ' opp-job-card--open' : ''}`}>
-                    <button
-                      className="opp-job-card__head"
+                    <button className="opp-job-card__head"
                       onClick={() => setExpanded(isOpen ? null : job.id)}
-                      aria-expanded={isOpen}
-                      aria-controls={`job-body-${job.id}`}
-                    >
+                      aria-expanded={isOpen} aria-controls={`job-body-${job.id}`}>
                       <div className="opp-job-card__meta">
-                        <span
-                          className="opp-job-card__type"
-                          style={{ background: badge.bg, color: badge.color }}
-                        >
+                        <span className="opp-job-card__type" style={{ background: badge.bg, color: badge.color }}>
                           {job.type}
                         </span>
                         <h3 className="opp-job-card__title">{job.title}</h3>
-                        <p className="opp-job-card__location">
-                          📍 {job.location}
-                          {job.deadline && (
-                            <span className="opp-job-card__deadline">
-                              &nbsp;· Date limite : {job.deadline}
-                            </span>
-                          )}
-                        </p>
+                        <p className="opp-job-card__location">📍 {job.location}</p>
                       </div>
-                      <span className="opp-job-card__chevron" aria-hidden="true">
-                        {isOpen ? '▲' : '▼'}
-                      </span>
+                      <span className="opp-job-card__chevron" aria-hidden="true">{isOpen ? '▲' : '▼'}</span>
                     </button>
 
-                    <div
-                      id={`job-body-${job.id}`}
-                      className="opp-job-card__body"
-                      hidden={!isOpen}
-                    >
+                    <div id={`job-body-${job.id}`} className="opp-job-card__body" hidden={!isOpen}>
                       <p className="opp-job-card__desc">{job.description}</p>
-
                       {job.requirements.length > 0 && (
                         <>
-                          <h4 className="opp-job-card__req-title">Profil recherché</h4>
+                          <h4 className="opp-job-card__req-title">
+                            {lang === 'fr' ? 'Profil recherche' : 'Profile required'}
+                          </h4>
                           <ul className="opp-job-card__req-list">
-                            {job.requirements.map((r, i) => (
-                              <li key={i}>{r}</li>
-                            ))}
+                            {job.requirements.map((r, i) => <li key={i}>{r}</li>)}
                           </ul>
                         </>
                       )}
-
                       <div className="opp-job-card__actions">
-                        {job.contactEmail ? (
-                          <a
-                            href={`mailto:${job.contactEmail}?subject=Candidature : ${encodeURIComponent(job.title)}`}
-                            className="opp-job-card__apply"
-                          >
-                            ✉ Postuler par e-mail
-                          </a>
-                        ) : (
-                          <Button to="/contact" size="sm">Postuler via le formulaire</Button>
-                        )}
+                        <Button to="/contact" size="sm">{t('opp.apply')}</Button>
                       </div>
                     </div>
                   </div>
@@ -310,17 +179,18 @@ export default function Opportunities() {
         </div>
       </section>
 
-      {/* ══ CTA ══════════════════════════════════════════════ */}
-      <section className="section section--green" aria-label="Appel à l'action">
+      {/* CTA */}
+      <section className="section section--green">
         <div className="container text-center">
           <h2 className="section__title" style={{ marginBottom: '0.75rem' }}>
-            Une question sur nos opportunités&nbsp;?
+            {lang === 'fr' ? 'Une question sur nos opportunites ?' : 'A question about our opportunities?'}
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.78)', marginBottom: '1.75rem', fontSize: '1.05rem' }}>
-            Contactez l&apos;IPJBU – DUHINDURINGENDO pour toute demande de
-            partenariat, candidature ou information sur nos activités.
+            {lang === 'fr'
+              ? "Contactez l'IPJBU pour toute demande de partenariat, candidature ou information."
+              : "Contact IPJBU for any partnership enquiry, application or information request."}
           </p>
-          <Button to="/contact" size="lg">Nous contacter</Button>
+          <Button to="/contact" size="lg">{t('contactus')}</Button>
         </div>
       </section>
 

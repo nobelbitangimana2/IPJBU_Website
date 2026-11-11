@@ -3,44 +3,39 @@ import { NavLink, Link, useLocation } from 'react-router-dom'
 import { useLang } from '../store/LangContext'
 import './NavBar.css'
 
-/* ── Always-visible top-level links ── */
-const TOP_LINKS = [
-  { to: '/',       label: 'Accueil', end: true },
-  { to: '/about',  label: 'À propos'           },
-  { to: '/gallery',label: 'Galerie'            },
-  { to: '/contact',label: 'Contact'            },
-]
-
-/* ── Links that live INSIDE the "Menu" dropdown ── */
-const MENU_LINKS = [
-  { to: '/programmes',    label: 'Programmes'   },
-  { to: '/partners',      label: 'Partenaires'  },
-  { to: '/opportunities', label: 'Opportunités' },
-  { to: '/news',          label: 'Actualités'   },
-]
-
 export default function NavBar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropOpen,   setDropOpen]   = useState(false)
   const [scrolled,   setScrolled]   = useState(false)
-  const { lang, toggle: toggleLang } = useLang()
+  const { lang, toggle: toggleLang, t } = useLang()
   const dropRef  = useRef(null)
   const location = useLocation()
 
-  /* Close dropdown when route changes */
+  const TOP_LINKS = [
+    { to: '/',        label: t('nav.home'),    end: true },
+    { to: '/about',   label: t('nav.about')             },
+    { to: '/gallery', label: t('nav.gallery')           },
+    { to: '/contact', label: t('nav.contact')           },
+  ]
+
+  const MENU_LINKS = [
+    { to: '/programmes',    label: t('nav.programmes')    },
+    { to: '/partners',      label: t('nav.partners')      },
+    { to: '/opportunities', label: t('nav.opportunities') },
+    { to: '/news',          label: t('nav.news')          },
+  ]
+
   useEffect(() => {
     setDropOpen(false)
     setMobileOpen(false)
   }, [location.pathname])
 
-  /* Scroll shadow */
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 8)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  /* Close dropdown on outside click */
   useEffect(() => {
     if (!dropOpen) return
     function handle(e) {
@@ -54,40 +49,30 @@ export default function NavBar() {
 
   const closeAll = () => { setMobileOpen(false); setDropOpen(false) }
 
-  /* Is any dropdown link currently active? */
-  const menuActive = MENU_LINKS.some(l => location.pathname === l.to ||
-    location.pathname.startsWith(l.to + '/'))
+  const menuActive = MENU_LINKS.some(l =>
+    location.pathname === l.to || location.pathname.startsWith(l.to + '/'))
 
   return (
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`} role="banner">
       <div className="navbar__inner container">
 
-        {/* ── Logo ── */}
         <Link to="/" className="navbar__logo" onClick={closeAll}
           aria-label="IPJBU – DUHINDURINGENDO — accueil">
-          <img
-            src="/IpjbuLogo.jpg"
-            alt="Logo IPJBU – DUHINDURINGENDO"
-            className="navbar__logo-img"
-          />
+          <img src="/IpjbuLogo.jpg" alt="Logo IPJBU – DUHINDURINGENDO" className="navbar__logo-img" />
           <span className="navbar__logo-text">
             <span className="navbar__logo-short">IPJBU</span>
             <span className="navbar__logo-full">IPJBU&nbsp;–&nbsp;DUHINDURINGENDO</span>
           </span>
         </Link>
 
-        {/* ── Desktop nav ── */}
-        <nav className="navbar__links" aria-label="Navigation principale">
-
+        <nav className="navbar__links" aria-label={lang === 'fr' ? 'Navigation principale' : 'Main navigation'}>
           {TOP_LINKS.map(({ to, label, end }) => (
             <NavLink key={to} to={to} end={end}
-              className={({ isActive }) =>
-                'navbar__link' + (isActive ? ' navbar__link--active' : '')}>
+              className={({ isActive }) => 'navbar__link' + (isActive ? ' navbar__link--active' : '')}>
               {label}
             </NavLink>
           ))}
 
-          {/* ── "Menu" dropdown ── */}
           <div
             className={`navbar__dropdown${dropOpen ? ' navbar__dropdown--open' : ''}${menuActive ? ' navbar__dropdown--active' : ''}`}
             ref={dropRef}
@@ -99,37 +84,23 @@ export default function NavBar() {
               aria-expanded={dropOpen}
               aria-controls="nav-dropdown-panel"
             >
-              Menu
-              <span className="navbar__chevron" aria-hidden="true">
-                {dropOpen ? '▲' : '▼'}
-              </span>
+              {t('nav.menu')}
+              <span className="navbar__chevron" aria-hidden="true">{dropOpen ? '▲' : '▼'}</span>
             </button>
 
-            <div
-              id="nav-dropdown-panel"
-              className="navbar__dropdown-panel"
-              role="menu"
-              aria-label="Sous-menu"
-            >
+            <div id="nav-dropdown-panel" className="navbar__dropdown-panel" role="menu">
               {MENU_LINKS.map(({ to, label }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  role="menuitem"
+                <NavLink key={to} to={to} role="menuitem"
                   className={({ isActive }) =>
-                    'navbar__dropdown-link' + (isActive ? ' navbar__dropdown-link--active' : '')
-                  }
-                  onClick={closeAll}
-                >
+                    'navbar__dropdown-link' + (isActive ? ' navbar__dropdown-link--active' : '')}
+                  onClick={closeAll}>
                   {label}
                 </NavLink>
               ))}
             </div>
           </div>
-
         </nav>
 
-        {/* ── Desktop actions: Lang switcher + Donate ── */}
         <div className="navbar__actions">
           <button
             className="navbar__lang"
@@ -140,15 +111,14 @@ export default function NavBar() {
             {lang === 'fr' ? 'EN' : 'FR'}
           </button>
           <Link to="/contact" className="navbar__donate" onClick={closeAll}>
-            Faire un don
+            {t('nav.donate')}
           </Link>
         </div>
 
-        {/* ── Hamburger ── */}
         <button
           className={`navbar__hamburger${mobileOpen ? ' navbar__hamburger--open' : ''}`}
           onClick={() => setMobileOpen(o => !o)}
-          aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-label={mobileOpen ? (lang === 'fr' ? 'Fermer le menu' : 'Close menu') : (lang === 'fr' ? 'Ouvrir le menu' : 'Open menu')}
           aria-expanded={mobileOpen}
           aria-controls="mobile-menu"
         >
@@ -156,44 +126,31 @@ export default function NavBar() {
         </button>
       </div>
 
-      {/* ── Mobile drawer ── */}
-      <nav
-        id="mobile-menu"
+      <nav id="mobile-menu"
         className={`navbar__mobile${mobileOpen ? ' navbar__mobile--open' : ''}`}
-        aria-label="Navigation mobile"
-        aria-hidden={!mobileOpen}
-      >
+        aria-hidden={!mobileOpen}>
         {TOP_LINKS.map(({ to, label, end }) => (
           <NavLink key={to} to={to} end={end}
-            className={({ isActive }) =>
-              'navbar__mobile-link' + (isActive ? ' navbar__mobile-link--active' : '')}
-            onClick={closeAll}>
-            {label}
-          </NavLink>
+            className={({ isActive }) => 'navbar__mobile-link' + (isActive ? ' navbar__mobile-link--active' : '')}
+            onClick={closeAll}>{label}</NavLink>
         ))}
 
-        {/* Divider + dropdown items flat in mobile */}
-        <div className="navbar__mobile-divider" aria-hidden="true">Menu</div>
+        <div className="navbar__mobile-divider" aria-hidden="true">{t('nav.menu')}</div>
 
         {MENU_LINKS.map(({ to, label }) => (
           <NavLink key={to} to={to}
             className={({ isActive }) =>
               'navbar__mobile-link navbar__mobile-link--sub' + (isActive ? ' navbar__mobile-link--active' : '')}
-            onClick={closeAll}>
-            {label}
-          </NavLink>
+            onClick={closeAll}>{label}</NavLink>
         ))}
 
         <div className="navbar__mobile-bottom">
-          <button
-            className="navbar__mobile-lang"
-            onClick={toggleLang}
-            aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
-          >
+          <button className="navbar__mobile-lang" onClick={toggleLang}
+            aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}>
             {lang === 'fr' ? '🌐 EN' : '🌐 FR'}
           </button>
           <Link to="/contact" className="navbar__mobile-donate" onClick={closeAll}>
-            Faire un don
+            {t('nav.donate')}
           </Link>
         </div>
       </nav>

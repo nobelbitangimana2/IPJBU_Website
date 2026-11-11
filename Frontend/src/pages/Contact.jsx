@@ -1,26 +1,30 @@
 import React, { useState } from 'react'
 import Button  from '../components/Button'
 import { useData } from '../store/DataContext'
+import { useLang } from '../store/LangContext'
 import { submitContactForm } from '../data/contact'
 import './Contact.css'
 
 const INIT = { name: '', email: '', message: '' }
 
-function validate(f) {
-  const e = {}
-  if (!f.name.trim())    e.name    = 'Le nom est requis.'
-  if (!f.email.trim())   e.email   = 'L\'adresse e-mail est requise.'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) e.email = 'Entrez une adresse e-mail valide.'
-  if (!f.message.trim()) e.message = 'Le message est requis.'
-  return e
-}
-
 export default function Contact() {
   const { contact: info } = useData()
+  const { t, lang }       = useLang()
   const [fields,  setFields]  = useState(INIT)
   const [errors,  setErrors]  = useState({})
   const [touched, setTouched] = useState({})
   const [status,  setStatus]  = useState('idle')
+
+  function validate(f) {
+    const e = {}
+    const isFr = lang === 'fr'
+    if (!f.name.trim())    e.name    = isFr ? 'Le nom est requis.'             : 'Name is required.'
+    if (!f.email.trim())   e.email   = isFr ? "L'adresse e-mail est requise."  : 'Email is required.'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))
+                           e.email   = isFr ? 'Entrez une adresse e-mail valide.' : 'Enter a valid email address.'
+    if (!f.message.trim()) e.message = isFr ? 'Le message est requis.'         : 'Message is required.'
+    return e
+  }
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -43,17 +47,14 @@ export default function Contact() {
       setTouched({})
       setErrors({})
     } catch (err) {
-      console.error('Erreur formulaire de contact :', err.message)
       setStatus('error')
     }
   }
 
-  /* Résolution des numéros de téléphone (nouveau format phones[] ou ancien phone) */
   const phonesList = info?.phones?.length
     ? info.phones
-    : (info?.phone ? [{ label: 'Téléphone', number: info.phone }] : [])
+    : (info?.phone ? [{ label: lang === 'fr' ? 'Tel' : 'Phone', number: info.phone }] : [])
 
-  /* Résolution de l'URL de la carte */
   const mapSrc = info?.mapEmbedUrl ||
     'https://www.openstreetmap.org/export/embed.html?bbox=29.90%2C-3.47%2C29.96%2C-3.42&layer=mapnik'
 
@@ -62,49 +63,41 @@ export default function Contact() {
 
       <div className="page-hero">
         <div className="container page-hero__inner">
-          <span className="page-hero__label">Contact</span>
-          <h1 className="page-hero__title">Contactez-nous</h1>
-          <p className="page-hero__sub">
-            Pour toute question sur nos programmes, un partenariat ou un soutien,
-            n'hésitez pas à nous écrire.
-          </p>
+          <span className="page-hero__label">{t('contact.hero.label')}</span>
+          <h1 className="page-hero__title">{t('contact.hero.title')}</h1>
+          <p className="page-hero__sub">{t('contact.hero.sub')}</p>
         </div>
       </div>
 
       <section className="section section--white">
         <div className="container contact__grid">
 
-          {/* Informations de contact */}
+          {/* Contact info */}
           <div className="contact__info">
-            <h2 className="contact__heading">Informations de contact</h2>
+            <h2 className="contact__heading">{t('contact.info.heading')}</h2>
             {info && (
               <>
                 <div className="contact__items">
-                  {/* Adresse */}
                   {info.address && (
                     <div className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">📍</span>
                       <div>
-                        <p className="contact__item-label">Adresse</p>
+                        <p className="contact__item-label">{lang === 'fr' ? 'Adresse' : 'Address'}</p>
                         <div className="contact__item-value">{info.address}</div>
                       </div>
                     </div>
                   )}
-
-                  {/* Téléphones (format tableau) */}
-                  {phonesList.length > 0 && phonesList.map(({ label, number }) => (
+                  {phonesList.map(({ label, number }) => (
                     <div key={number} className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">📞</span>
                       <div>
-                        <p className="contact__item-label">{label || 'Téléphone'}</p>
+                        <p className="contact__item-label">{label || (lang === 'fr' ? 'Téléphone' : 'Phone')}</p>
                         <div className="contact__item-value">
                           <a href={`tel:${(number || '').replace(/\s/g, '')}`}>{number}</a>
                         </div>
                       </div>
                     </div>
                   ))}
-
-                  {/* E-mail (masqué si vide) */}
                   {info.email && (
                     <div className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">✉️</span>
@@ -116,29 +109,26 @@ export default function Contact() {
                       </div>
                     </div>
                   )}
-
-                  {/* Horaires */}
                   {info.officeHours && (
                     <div className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">🕐</span>
                       <div>
-                        <p className="contact__item-label">Horaires</p>
+                        <p className="contact__item-label">{lang === 'fr' ? 'Horaires' : 'Hours'}</p>
                         <div className="contact__item-value">{info.officeHours}</div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* Réseaux sociaux — masqués si tous vides */}
                 {info.socialLinks && Object.values(info.socialLinks).some(Boolean) && (
                   <div className="contact__social">
-                    <p className="contact__social-label">Suivez-nous</p>
+                    <p className="contact__social-label">{lang === 'fr' ? 'Suivez-nous' : 'Follow us'}</p>
                     <div className="contact__social-pills">
                       {Object.entries(info.socialLinks).map(([p, url]) =>
                         url ? (
                           <a key={p} href={url} target="_blank" rel="noopener noreferrer"
                             className="contact__social-pill">
-                            {p === 'facebook' ? 'Suivez-nous sur Facebook' : p.charAt(0).toUpperCase() + p.slice(1)}
+                            {p.charAt(0).toUpperCase() + p.slice(1)}
                           </a>
                         ) : null
                       )}
@@ -148,10 +138,9 @@ export default function Contact() {
               </>
             )}
 
-            {/* Carte */}
             <div className="contact__map">
               <iframe
-                title="Localisation IPJBU – DUHINDURINGENDO"
+                title="Localisation IPJBU"
                 src={mapSrc}
                 width="100%" height="220"
                 style={{ border: 'none', borderRadius: 'var(--radius)' }}
@@ -160,66 +149,53 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Formulaire */}
+          {/* Form */}
           <div className="contact__form-wrap">
-            <h2 className="contact__heading">Envoyer un message</h2>
+            <h2 className="contact__heading">{t('contact.form.heading')}</h2>
 
             {status === 'success' ? (
               <div className="contact__success" role="alert">
                 <span className="contact__success-icon" aria-hidden="true">✅</span>
-                <h3>Message envoyé&nbsp;!</h3>
-                <p>Merci de nous avoir contactés. Nous vous répondrons dans les meilleurs délais.</p>
+                <h3>{t('contact.success.title')}</h3>
+                <p>{t('contact.success.body')}</p>
                 <Button variant="outline" onClick={() => setStatus('idle')}>
-                  Envoyer un autre message
+                  {t('contact.success.again')}
                 </Button>
               </div>
             ) : (
               <form className="contact__form" onSubmit={handleSubmit} noValidate>
                 {[
-                  { id: 'name',  label: 'Nom complet',       type: 'text',  autoComplete: 'name',  placeholder: 'Votre nom complet'   },
-                  { id: 'email', label: 'Adresse e-mail',    type: 'email', autoComplete: 'email', placeholder: 'vous@exemple.com'    },
+                  { id: 'name',  label: t('contact.form.name'),  type: 'text',  autoComplete: 'name',  placeholder: lang === 'fr' ? 'Votre nom complet' : 'Your full name' },
+                  { id: 'email', label: t('contact.form.email'), type: 'email', autoComplete: 'email', placeholder: lang === 'fr' ? 'vous@exemple.com'  : 'you@example.com' },
                 ].map(({ id, label, type, autoComplete, placeholder }) => (
                   <div key={id} className={`cform-field${fieldErr(id) ? ' cform-field--error' : ''}`}>
                     <label htmlFor={id} className="cform-label">{label} <span aria-hidden="true">*</span></label>
-                    <input
-                      id={id} name={id} type={type}
-                      className="cform-input"
-                      value={fields[id]}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      autoComplete={autoComplete}
-                      placeholder={placeholder}
-                      aria-required="true"
-                      disabled={status === 'submitting'}
-                    />
+                    <input id={id} name={id} type={type} className="cform-input"
+                      value={fields[id]} onChange={handleChange} onBlur={handleBlur}
+                      autoComplete={autoComplete} placeholder={placeholder}
+                      aria-required="true" disabled={status === 'submitting'} />
                     {fieldErr(id) && <p className="cform-error" role="alert">{fieldErr(id)}</p>}
                   </div>
                 ))}
 
                 <div className={`cform-field${fieldErr('message') ? ' cform-field--error' : ''}`}>
-                  <label htmlFor="message" className="cform-label">Message <span aria-hidden="true">*</span></label>
-                  <textarea
-                    id="message" name="message"
-                    className="cform-input cform-textarea"
-                    value={fields.message}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
+                  <label htmlFor="message" className="cform-label">
+                    {t('contact.form.message')} <span aria-hidden="true">*</span>
+                  </label>
+                  <textarea id="message" name="message" className="cform-input cform-textarea"
+                    value={fields.message} onChange={handleChange} onBlur={handleBlur}
                     rows={6}
-                    placeholder="Comment pouvons-nous vous aider ?"
-                    aria-required="true"
-                    disabled={status === 'submitting'}
-                  />
+                    placeholder={lang === 'fr' ? 'Comment pouvons-nous vous aider ?' : 'How can we help you?'}
+                    aria-required="true" disabled={status === 'submitting'} />
                   {fieldErr('message') && <p className="cform-error" role="alert">{fieldErr('message')}</p>}
                 </div>
 
                 {status === 'error' && (
-                  <p className="cform-submit-error" role="alert">
-                    Une erreur s'est produite. Veuillez réessayer.
-                  </p>
+                  <p className="cform-submit-error" role="alert">{t('error')}</p>
                 )}
 
                 <Button type="submit" size="lg" fullWidth disabled={status === 'submitting'}>
-                  {status === 'submitting' ? 'Envoi en cours…' : 'Envoyer le message'}
+                  {status === 'submitting' ? t('contact.form.sending') : t('contact.form.submit')}
                 </Button>
               </form>
             )}
