@@ -2,12 +2,13 @@ import React, { useState, useMemo } from 'react'
 import ImageGrid from '../components/ImageGrid'
 import { useData } from '../store/DataContext'
 import { useLang } from '../store/LangContext'
+import Reveal from '../components/Reveal'
 import './Gallery.css'
 
 export default function Gallery() {
   const { images, galleryImages } = useData()
-  const { t, lang } = useLang()
-  const all = lang === 'fr' ? 'Tous' : 'All'
+  const { t } = useLang()
+  const all = t('gallery.filter.all')
   const [active, setActive] = useState(all)
 
   const categories = useMemo(
@@ -34,8 +35,8 @@ export default function Gallery() {
 
       <section className="section section--white">
         <div className="container">
-          <div className="gallery__tabs" role="tablist"
-            aria-label={lang === 'fr' ? 'Filtrer par catégorie' : 'Filter by category'}>
+          <Reveal className="gallery__tabs" role="tablist"
+            aria-label={t('gallery.filter')}>
             {categories.map(cat => (
               <button key={cat} role="tab"
                 aria-selected={active === cat}
@@ -45,7 +46,7 @@ export default function Gallery() {
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
               </button>
             ))}
-          </div>
+          </Reveal>
 
           <p className="gallery__count" aria-live="polite">
             {displayed.length} {photoWord}

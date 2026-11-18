@@ -2,52 +2,51 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '../store/DataContext'
 import { useLang } from '../store/LangContext'
+import Reveal from './Reveal'
 import './Footer.css'
 
 export default function Footer() {
   const year        = new Date().getFullYear()
   const { contact } = useData()
-  const { t, lang } = useLang()
+  const { t } = useLang()
   const phones      = contact?.phones ?? []
 
   const firstPhone = phones[0] ?? (contact?.phone ? { label: '', number: contact.phone } : null)
 
   const NAV_LINKS = [
     { to: '/',              label: t('nav.home')          },
-    { to: '/about',         label: lang === 'fr' ? 'A propos'   : 'About'        },
+    { to: '/about',         label: t('footer.about')       },
     { to: '/programmes',    label: t('nav.programmes')    },
     { to: '/partners',      label: t('nav.partners')      },
     { to: '/opportunities', label: t('nav.opportunities') },
     { to: '/gallery',       label: t('nav.gallery')       },
     { to: '/news',          label: t('nav.news')          },
     { to: '/contact',       label: t('nav.contact')       },
-    { to: '/mentions-legales', label: lang === 'fr' ? 'Mentions legales' : 'Legal notice' },
+    { to: '/mentions-legales', label: t('footer.legalNav') },
   ]
 
   return (
     <footer className="footer" role="contentinfo">
       <div className="footer__main container">
-        <div className="footer__brand">
-          <Link to="/" className="footer__logo" aria-label="IPJBU – DUHINDURINGENDO accueil">
-            <img src="/IpjbuLogo.jpg" alt="Logo IPJBU – DUHINDURINGENDO" className="footer__logo-img" />
+        <Reveal as="div" className="footer__brand" animation="fade-up">
+          <Link to="/" className="footer__logo" aria-label={t('brand.logoLabel')}>
+            <img src="/IpjbuLogo.jpg" alt={t('brand.logoAlt')} className="footer__logo-img" />
             <div>
               <span className="footer__logo-name">IPJBU – DUHINDURINGENDO</span>
               <span className="footer__logo-sub">
-                {lang === 'fr'
-                  ? '« Jeunesse Burundaise, faisons la difference »'
-                  : '"Burundian Youth, let\'s make a difference"'}
+                {t('footer.motto')}
               </span>
             </div>
           </Link>
-        </div>
+        </Reveal>
 
-        <nav className="footer__nav" aria-label={lang === 'fr' ? 'Navigation pied de page' : 'Footer navigation'}>
+        <Reveal as="nav" className="footer__nav" animation="fade-up" delay={90} aria-label={t('footer.navLabel')}>
           {NAV_LINKS.map(({ to, label }) => (
             <Link key={to} to={to} className="footer__link">{label}</Link>
           ))}
-        </nav>
+        </Reveal>
 
-        <div className="footer__contact">
+        <Reveal as="div" className="footer__contact" animation="fade-up" delay={180}>
           {contact?.address && (
             <p className="footer__contact-line">
               📍 {contact.address.split(',').slice(0, 2).join(', ')}
@@ -66,7 +65,7 @@ export default function Footer() {
             </p>
           )}
           <Link to="/donate" className="footer__donate">{t('nav.donate')}</Link>
-        </div>
+        </Reveal>
       </div>
 
       <div className="footer__bottom container">

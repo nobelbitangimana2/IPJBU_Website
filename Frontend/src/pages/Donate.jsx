@@ -1,58 +1,56 @@
 import React from 'react'
-import { useLang } from '../store/LangContext'
+import { useTranslation } from 'react-i18next'
 import { useData } from '../store/DataContext'
 import Button from '../components/Button'
+import Reveal from '../components/Reveal'
 import './Donate.css'
 
 export default function Donate() {
-  const { lang, t } = useLang()
-  const { contact } = useData()
+  const { t } = useTranslation()
+  const { content, contact } = useData()
+  const donationMethods = (content.donationMethods || []).filter(Boolean)
 
   return (
     <div className="donate-page">
       <div className="page-hero">
         <div className="container page-hero__inner">
           <span className="page-hero__label">{t('nav.donate')}</span>
-          <h1 className="page-hero__title">
-            {lang === 'fr' ? 'Soutenez notre action' : 'Support our work'}
-          </h1>
-          <p className="page-hero__sub">
-            {lang === 'fr'
-              ? "Votre soutien aide les jeunes, les orphelins et les femmes vulnérables à développer leur autonomie."
-              : 'Your support helps youth, orphans and vulnerable women build lasting independence.'}
-          </p>
+          <h1 className="page-hero__title">{t('donate.hero.title')}</h1>
+          <p className="page-hero__sub">{t('donate.hero.sub')}</p>
         </div>
       </div>
 
       <section className="section section--cream">
         <div className="container donate__grid">
-          <div className="donate__card">
-            <span className="donate__icon" aria-hidden="true">💚</span>
-            <h2>{lang === 'fr' ? 'Faire un don' : 'Make a donation'}</h2>
-            <p>
-              {lang === 'fr'
-                ? "Pour connaître les modalités de don, les coordonnées bancaires ou organiser un soutien matériel, contactez directement l'équipe IPJBU."
-                : 'To receive donation instructions, banking details or arrange support in kind, contact the IPJBU team directly.'}
-            </p>
-            {contact?.email && (
-              <a className="donate__contact" href={`mailto:${contact.email}`}>✉ {contact.email}</a>
-            )}
-            {contact?.phone && (
-              <a className="donate__contact" href={`tel:${contact.phone.replace(/\s/g, '')}`}>📞 {contact.phone}</a>
-            )}
-            <Button to="/contact" size="lg">
-              {lang === 'fr' ? 'Contacter l’IPJBU' : 'Contact IPJBU'}
-            </Button>
-          </div>
+          <Reveal as="article" className="donate__card">
+            <h2>{t('donate.methods.title')}</h2>
+            <p>{t('donate.methods.body')}</p>
+          </Reveal>
 
-          <div className="donate__impact">
-            <h2>{lang === 'fr' ? 'Votre soutien fait la différence' : 'Your support makes a difference'}</h2>
-            <ul>
-              <li>{lang === 'fr' ? 'Financer des formations agro-pastorales' : 'Fund agro-pastoral training'}</li>
-              <li>{lang === 'fr' ? 'Fournir des semences, outils et intrants' : 'Provide seeds, tools and inputs'}</li>
-              <li>{lang === 'fr' ? 'Accompagner les communautés vulnérables' : 'Support vulnerable communities'}</li>
-            </ul>
-          </div>
+          <Reveal as="article" className="donate__impact" delay={90}>
+            <h2>{t('donate.payment.title')}</h2>
+            {donationMethods.length ? (
+              <ul>
+                {donationMethods.map((method, index) => <li key={`${method}-${index}`}>{method}</li>)}
+              </ul>
+            ) : (
+              <p className="donate__placeholder">{t('donate.payment.empty')}</p>
+            )}
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="section section--white">
+        <div className="container donate__thanks">
+          <Reveal className="donate__thanks-content">
+            <h2>{t('donate.thanks')}</h2>
+            <p>{t('donate.contact')}</p>
+            <div className="donate__contact-links">
+              {contact?.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
+              {contact?.phone && <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>}
+            </div>
+            <Button to="/contact" size="lg">{t('contactus')}</Button>
+          </Reveal>
         </div>
       </section>
     </div>

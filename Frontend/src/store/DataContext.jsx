@@ -18,6 +18,7 @@ const DEFAULT_CONTENT = {
   mission: 'Promouvoir l\'autopromotion de la jeunesse et des femmes vulnérables par le développement agro-pastoral durable.',
   vision: 'Une jeunesse autonome, solidaire et actrice du développement socio-économique du Burundi.',
   partners: [],
+  donationMethods: [],
 }
 const DEFAULT_CONTACT = {
   address: '', phone: '', email: '', officeHours: '',
@@ -37,6 +38,8 @@ function normalizePartner(partner) {
 export function DataProvider({ children }) {
   const [images,   setImages]   = useState([])
   const [updates,  setUpdates]  = useState([])
+  const [opportunities, setOpportunities] = useState([])
+  const [adminOpportunities, setAdminOpportunities] = useState([])
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
   const [team,     setTeam]     = useState([])
@@ -53,7 +56,7 @@ export function DataProvider({ children }) {
   // ── Initial load ─────────────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
     try {
-      const [imgsRes, updsRes, prodsRes, teamRes, contRes, ctctRes, catsRes] = await Promise.allSettled([
+      const [imgsRes, updsRes, prodsRes, teamRes, contRes, ctctRes, catsRes, oppsRes] = await Promise.allSettled([
         api.get('/api/media'),
         api.get('/api/updates'),
         api.get('/api/products'),
@@ -61,14 +64,20 @@ export function DataProvider({ children }) {
         api.get('/api/content'),
         api.get('/api/contact'),
         api.get('/api/categories'),
+        api.get('/api/opportunities'),
       ])
       if (imgsRes.status  === 'fulfilled') setImages(imgsRes.value.data)
       if (updsRes.status  === 'fulfilled') setUpdates(updsRes.value.data)
+      if (oppsRes.status === 'fulfilled') setOpportunities(oppsRes.value.data)
       if (prodsRes.status === 'fulfilled') setProducts(prodsRes.value.data)
       if (teamRes.status  === 'fulfilled') setTeam(teamRes.value.data)
       if (contRes.status  === 'fulfilled') {
         const loadedContent = contRes.value.data || DEFAULT_CONTENT
-        setContent({ ...loadedContent, partners: (loadedContent.partners || []).map(normalizePartner) })
+        setContent({
+          ...loadedContent,
+          partners: (loadedContent.partners || []).map(normalizePartner),
+          donationMethods: Array.isArray(loadedContent.donationMethods) ? loadedContent.donationMethods : [],
+        })
       }
       if (ctctRes.status  === 'fulfilled') setContact(ctctRes.value.data || DEFAULT_CONTACT)
       if (catsRes.status === 'fulfilled') setCategories(catsRes.value.data)
@@ -151,6 +160,48 @@ export function DataProvider({ children }) {
     setUpdates((prev) => prev.filter((u) => u.id !== id))
   }
 
+  async function addOpportunity(opportunityData) {
+    const res = await api.post('/api/admin/opportunities', opportunityData)
+    setAdminOpportunities((prev) => [...prev, res.data])
+    if (res.data.published !== false) setOpportunities((prev) => [...prev, res.data])
+    return res.data
+  }
+
+  async function editOpportunity(id, patch) {
+    const res = await api.put(`/api/admin/opportunities/${id}`, patch)
+    setAdminOpportunities((prev) => prev.map((item) => (item.id === id ? res.data : item)))
+    setOpportunities((prev) => {
+      if (res.data.published === false || /^offre d['’]emploi$/i.test((res.data.type || '').trim())) {
+        return prev.filter((item) => item.id !== id)
+      }
+      return prev.some((item) => item.id === id)
+        ? prev.map((item) => (item.id === id ? res.data : item))
+        : [...prev, res.data]
+    })
+    return res.data
+  }
+
+  async function deleteOpportunity(id) {
+    await api.delete(`/api/admin/opportunities/${id}`)
+    setAdminOpportunities((prev) => prev.filter((item) => item.id !== id))
+    setOpportunities((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  const fetchAdminOpportunities = useCallback(async () => {
+    const res = await api.get('/api/admin/opportunities')
+    setAdminOpportunities(res.data)
+    return res.data
+  }, [])
+
+  async function uploadOpportunityPdf(file) {
+    const formData = new FormData()
+    formData.append('pdf', file)
+    const res = await api.post('/api/admin/opportunities/upload-pdf', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return res.data
+  }
+
   async function addCategory(data) {
     const res = await api.post('/api/admin/categories', data)
     setCategories((prev) => [...prev, res.data].sort((a, b) => a.name.localeCompare(b.name, 'fr')))
@@ -175,8 +226,13 @@ export function DataProvider({ children }) {
     const res = await api.put('/api/admin/content', {
       ...patch,
       partners: (patch.partners || []).map(normalizePartner),
+      donationMethods: Array.isArray(patch.donationMethods) ? patch.donationMethods : content.donationMethods || [],
     })
-    const saved = { ...res.data, partners: (res.data.partners || []).map(normalizePartner) }
+    const saved = {
+      ...res.data,
+      partners: (res.data.partners || []).map(normalizePartner),
+      donationMethods: Array.isArray(res.data.donationMethods) ? res.data.donationMethods : [],
+    }
     setContent(saved)
     return saved
   }
@@ -230,12 +286,14 @@ export function DataProvider({ children }) {
   return (
     <DataContext.Provider value={{
       // State
-      images, galleryImages, updates, categories, products, team, content, contact,
+      images, galleryImages, updates, opportunities, adminOpportunities, categories, products, team, content, contact,
       // Image actions
       addImage, deleteImage, updateImage, reorderImages,
       uploadTeamPhoto,
       // Update actions
       addUpdate, editUpdate, deleteUpdate,
+      addOpportunity, editOpportunity, deleteOpportunity, uploadOpportunityPdf,
+      fetchAdminOpportunities,
       addCategory, updateCategory, deleteCategory,
       // Product actions
       addProduct, editProduct, deleteProduct,

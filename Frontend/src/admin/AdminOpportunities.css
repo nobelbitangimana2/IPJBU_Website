@@ -1,0 +1,80 @@
+.adm-opportunities__list {
+  padding: 0 1.25rem;
+}
+
+.adm-opportunities__empty {
+  padding: 1.5rem 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.adm-opportunities__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.adm-opportunities__row:last-child { border-bottom: 0; }
+.adm-opportunities__details { min-width: 0; }
+.adm-opportunities__details h2 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+.adm-opportunities__details p,
+.adm-opportunities__details a { font-size: 0.8rem; color: var(--muted); }
+.adm-opportunities__details a { display: inline-block; color: var(--green-dark); text-decoration: underline; }
+
+.adm-opportunities__actions,
+.adm-opportunities__form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.adm-opportunities__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.adm-opportunities__two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.adm-opportunities__full { grid-column: 1 / -1; }
+.adm-opportunities__pdf { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.65rem; }
+.adm-opportunities__pdf a { color: var(--green-dark); text-decoration: underline; font-size: 0.875rem; }
+.adm-opportunities__no-pdf,
+.adm-opportunities__hint { color: var(--muted); font-size: 0.78rem; }
+.adm-opportunities__no-pdf { margin-bottom: 0.65rem; }
+
+.adm-opportunities__upload {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.adm-opportunities__upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.adm-opportunities__hint { margin-left: 0.65rem; }
+.adm-opportunities__form-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.adm-opportunities__publish { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+
+@media (min-width: 700px) {
+  .adm-opportunities__two-col { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 760px) {
+  .adm-opportunities__row { align-items: flex-start; flex-direction: column; }
+  .adm-opportunities__actions { justify-content: flex-start; }
+}

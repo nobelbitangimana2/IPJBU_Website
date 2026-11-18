@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Button     from '../components/Button'
 import UpdateCard from '../components/UpdateCard'
+import Reveal from '../components/Reveal'
 import { useData } from '../store/DataContext'
 import { useLang } from '../store/LangContext'
 import './Home.css'
 
 /* TODO: replace with authorised photos supplied by the association via the admin media panel */
 const FALLBACK_SLIDES = [
-  { url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80', alt: 'Champs agro-pastoraux' },
-  { url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1600&q=80', alt: 'Travail agricole'      },
-  { url: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&q=80', alt: 'Recolte'               },
+  { url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80', altKey: 'home.slide.farmland' },
+  { url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1600&q=80', altKey: 'home.slide.farming' },
+  { url: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&q=80', altKey: 'home.slide.harvest' },
 ]
 const FALLBACK_PHOTO = 'https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=900&q=80'
 
@@ -20,8 +21,8 @@ export default function Home() {
   const [slide, setSlide] = useState(0)
 
   const slides = galleryImages.length
-    ? galleryImages.slice(0, 5).map(i => ({ url: i.url, alt: i.alt || 'Photo IPJBU' }))
-    : FALLBACK_SLIDES
+    ? galleryImages.slice(0, 5).map(i => ({ url: i.url, alt: i.alt || t('home.imageAlt') }))
+    : FALLBACK_SLIDES.map(item => ({ url: item.url, alt: t(item.altKey) }))
 
   const valuesPhoto = galleryImages[5] ?? galleryImages[0]
 
@@ -39,7 +40,7 @@ export default function Home() {
     <div className="home">
 
       {/* HERO */}
-      <section className="hero" aria-label="Banniere principale">
+      <section className="hero" aria-label={t('home.hero.aria')}>
         {slides.map((s, i) => (
           <img
             key={s.url}
@@ -72,7 +73,7 @@ export default function Home() {
               key={i}
               className={`hero__dot${i === slide ? ' hero__dot--active' : ''}`}
               onClick={() => setSlide(i)}
-              aria-label={`Diapositive ${i + 1}`}
+              aria-label={t('home.slide.label', { count: i + 1 })}
             />
           ))}
         </div>
@@ -87,7 +88,7 @@ export default function Home() {
               { icon: '🛠️', color: 'var(--orange)',     panel: '#fff3dc',            tk: 'feat.2.title', dk: 'feat.2.desc', ck: 'feat.2.cta' },
               { icon: '🏭', color: 'var(--green-dark)', panel: 'var(--green-light)', tk: 'feat.3.title', dk: 'feat.3.desc', ck: 'feat.3.cta' },
             ].map(({ icon, color, panel, tk, dk, ck }) => (
-              <div key={tk} className="feat-card" style={{ background: panel }}>
+              <Reveal key={tk} as="article" className="feat-card" delay={color === 'var(--orange)' ? 80 : 0} style={{ background: panel }}>
                 <div className="feat-card__icon" style={{ background: color }}>
                   <span aria-hidden="true">{icon}</span>
                 </div>
@@ -96,7 +97,7 @@ export default function Home() {
                 <Link to="/programmes" className="feat-card__link" style={{ color }}>
                   {t(ck)} &rarr;
                 </Link>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -106,7 +107,7 @@ export default function Home() {
       <section className="commitment section--cream">
         <div className="container">
           <div className="commitment__top">
-            <div className="commitment__text">
+            <Reveal className="commitment__text" animation="slide-in-left">
               <span className="section__label">{t('home.values.label')}</span>
               <h2 className="section__title">
                 {t('home.values.title').split('\n').map((line, i) => (
@@ -115,15 +116,15 @@ export default function Home() {
               </h2>
               <p className="commitment__intro">{t('home.values.intro')}</p>
               <Button to="/about" variant="outline">{t('home.values.cta')}</Button>
-            </div>
-            <div className="commitment__photo-wrap">
+            </Reveal>
+            <Reveal className="commitment__photo-wrap" animation="slide-in-right">
               <img
                 src={valuesPhoto?.url ?? FALLBACK_PHOTO}
-                alt={valuesPhoto?.alt || 'Activite IPJBU'}
+                alt={valuesPhoto?.alt || t('home.values.photoAlt')}
                 className="commitment__photo"
                 loading="lazy"
               />
-            </div>
+            </Reveal>
           </div>
 
           <div className="commitment__values">
@@ -133,13 +134,13 @@ export default function Home() {
               { icon: '🌍', tk: 'val.solidarity.title', dk: 'val.solidarity.desc' },
               { icon: '💚', tk: 'val.empathy.title',    dk: 'val.empathy.desc'    },
             ].map(({ icon, tk, dk }) => (
-              <div key={tk} className="val-item">
+              <Reveal key={tk} as="div" className="val-item" delay={120}>
                 <span className="val-item__icon" aria-hidden="true">{icon}</span>
                 <div>
                   <p className="val-item__title">{t(tk)}</p>
                   <p className="val-item__desc">{t(dk)}</p>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -147,7 +148,7 @@ export default function Home() {
 
       {/* ACTUALITES */}
       {latest.length > 0 && (
-        <section className="updates-section section--green">
+        <section className="updates-section section--basil">
           <div className="container">
             <div className="updates-section__header">
               <div>
@@ -174,16 +175,27 @@ export default function Home() {
             <div className="home-partners__grid">
               {content.partners.map((entry, index) => {
                 const partner = typeof entry === 'string' ? { name: entry } : entry
-                const inner = partner.logoUrl
-                  ? <img src={partner.logoUrl} alt={partner.name} loading="lazy" />
-                  : <span>{partner.name}</span>
-                return partner.websiteUrl ? (
-                  <a key={`${partner.name}-${index}`} href={partner.websiteUrl}
-                    target="_blank" rel="noopener noreferrer" className="home-partners__item">
-                    {inner}
-                  </a>
-                ) : (
-                  <div key={`${partner.name}-${index}`} className="home-partners__item">{inner}</div>
+                const name = partner.name || ''
+                const initials = name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
+                const logo = partner.logoUrl
+                  ? <img src={partner.logoUrl} alt="" loading="lazy" />
+                  : <span className="home-partners__initials" aria-hidden="true">{initials || '?'}</span>
+                const inner = (
+                  <>
+                    <span className="home-partners__logo">{logo}</span>
+                    <span className="home-partners__name">{name}</span>
+                  </>
+                )
+                return (
+                  <Reveal key={`${partner.name}-${index}`} className="home-partners__reveal" delay={index * 70}>
+                    {partner.websiteUrl ? (
+                      <a href={partner.websiteUrl} target="_blank" rel="noopener noreferrer" className="home-partners__item" title={name} aria-label={name}>
+                        {inner}
+                      </a>
+                    ) : (
+                      <div className="home-partners__item" title={name}>{inner}</div>
+                    )}
+                  </Reveal>
                 )
               })}
             </div>

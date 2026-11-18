@@ -3,13 +3,14 @@ import Button  from '../components/Button'
 import { useData } from '../store/DataContext'
 import { useLang } from '../store/LangContext'
 import { submitContactForm } from '../data/contact'
+import Reveal from '../components/Reveal'
 import './Contact.css'
 
 const INIT = { name: '', email: '', message: '' }
 
 export default function Contact() {
   const { contact: info } = useData()
-  const { t, lang }       = useLang()
+  const { t }             = useLang()
   const [fields,  setFields]  = useState(INIT)
   const [errors,  setErrors]  = useState({})
   const [touched, setTouched] = useState({})
@@ -17,12 +18,11 @@ export default function Contact() {
 
   function validate(f) {
     const e = {}
-    const isFr = lang === 'fr'
-    if (!f.name.trim())    e.name    = isFr ? 'Le nom est requis.'             : 'Name is required.'
-    if (!f.email.trim())   e.email   = isFr ? "L'adresse e-mail est requise."  : 'Email is required.'
+    if (!f.name.trim())    e.name    = t('contact.validation.name')
+    if (!f.email.trim())   e.email   = t('contact.validation.email')
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))
-                           e.email   = isFr ? 'Entrez une adresse e-mail valide.' : 'Enter a valid email address.'
-    if (!f.message.trim()) e.message = isFr ? 'Le message est requis.'         : 'Message is required.'
+                           e.email   = t('contact.validation.emailInvalid')
+    if (!f.message.trim()) e.message = t('contact.validation.message')
     return e
   }
 
@@ -53,7 +53,7 @@ export default function Contact() {
 
   const phonesList = info?.phones?.length
     ? info.phones
-    : (info?.phone ? [{ label: lang === 'fr' ? 'Tel' : 'Phone', number: info.phone }] : [])
+    : (info?.phone ? [{ label: t('contact.phone'), number: info.phone }] : [])
 
   const mapSrc = info?.mapEmbedUrl ||
     'https://www.openstreetmap.org/export/embed.html?bbox=29.90%2C-3.47%2C29.96%2C-3.42&layer=mapnik'
@@ -73,7 +73,7 @@ export default function Contact() {
         <div className="container contact__grid">
 
           {/* Contact info */}
-          <div className="contact__info">
+          <Reveal className="contact__info" animation="slide-in-left">
             <h2 className="contact__heading">{t('contact.info.heading')}</h2>
             {info && (
               <>
@@ -82,7 +82,7 @@ export default function Contact() {
                     <div className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">📍</span>
                       <div>
-                        <p className="contact__item-label">{lang === 'fr' ? 'Adresse' : 'Address'}</p>
+                        <p className="contact__item-label">{t('contact.address')}</p>
                         <div className="contact__item-value">{info.address}</div>
                       </div>
                     </div>
@@ -91,7 +91,7 @@ export default function Contact() {
                     <div key={number} className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">📞</span>
                       <div>
-                        <p className="contact__item-label">{label || (lang === 'fr' ? 'Téléphone' : 'Phone')}</p>
+                        <p className="contact__item-label">{label || t('contact.phone')}</p>
                         <div className="contact__item-value">
                           <a href={`tel:${(number || '').replace(/\s/g, '')}`}>{number}</a>
                         </div>
@@ -102,7 +102,7 @@ export default function Contact() {
                     <div className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">✉️</span>
                       <div>
-                        <p className="contact__item-label">E-mail</p>
+                        <p className="contact__item-label">{t('contact.emailLabel')}</p>
                         <div className="contact__item-value">
                           <a href={`mailto:${info.email}`}>{info.email}</a>
                         </div>
@@ -113,7 +113,7 @@ export default function Contact() {
                     <div className="contact__item">
                       <span className="contact__item-icon" aria-hidden="true">🕐</span>
                       <div>
-                        <p className="contact__item-label">{lang === 'fr' ? 'Horaires' : 'Hours'}</p>
+                        <p className="contact__item-label">{t('contact.hours')}</p>
                         <div className="contact__item-value">{info.officeHours}</div>
                       </div>
                     </div>
@@ -122,7 +122,7 @@ export default function Contact() {
 
                 {info.socialLinks && Object.values(info.socialLinks).some(Boolean) && (
                   <div className="contact__social">
-                    <p className="contact__social-label">{lang === 'fr' ? 'Suivez-nous' : 'Follow us'}</p>
+                    <p className="contact__social-label">{t('contact.follow')}</p>
                     <div className="contact__social-pills">
                       {Object.entries(info.socialLinks).map(([p, url]) =>
                         url ? (
@@ -140,17 +140,17 @@ export default function Contact() {
 
             <div className="contact__map">
               <iframe
-                title="Localisation IPJBU"
+                title={t('contact.mapTitle')}
                 src={mapSrc}
                 width="100%" height="220"
                 style={{ border: 'none', borderRadius: 'var(--radius)' }}
                 loading="lazy"
               />
-            </div>
           </div>
+          </Reveal>
 
           {/* Form */}
-          <div className="contact__form-wrap">
+          <Reveal className="contact__form-wrap" animation="slide-in-right">
             <h2 className="contact__heading">{t('contact.form.heading')}</h2>
 
             {status === 'success' ? (
@@ -165,8 +165,8 @@ export default function Contact() {
             ) : (
               <form className="contact__form" onSubmit={handleSubmit} noValidate>
                 {[
-                  { id: 'name',  label: t('contact.form.name'),  type: 'text',  autoComplete: 'name',  placeholder: lang === 'fr' ? 'Votre nom complet' : 'Your full name' },
-                  { id: 'email', label: t('contact.form.email'), type: 'email', autoComplete: 'email', placeholder: lang === 'fr' ? 'vous@exemple.com'  : 'you@example.com' },
+                  { id: 'name',  label: t('contact.form.name'),  type: 'text',  autoComplete: 'name',  placeholder: t('contact.namePlaceholder') },
+                  { id: 'email', label: t('contact.form.email'), type: 'email', autoComplete: 'email', placeholder: t('contact.emailPlaceholder') },
                 ].map(({ id, label, type, autoComplete, placeholder }) => (
                   <div key={id} className={`cform-field${fieldErr(id) ? ' cform-field--error' : ''}`}>
                     <label htmlFor={id} className="cform-label">{label} <span aria-hidden="true">*</span></label>
@@ -185,7 +185,7 @@ export default function Contact() {
                   <textarea id="message" name="message" className="cform-input cform-textarea"
                     value={fields.message} onChange={handleChange} onBlur={handleBlur}
                     rows={6}
-                    placeholder={lang === 'fr' ? 'Comment pouvons-nous vous aider ?' : 'How can we help you?'}
+                    placeholder={t('contact.messagePlaceholder')}
                     aria-required="true" disabled={status === 'submitting'} />
                   {fieldErr('message') && <p className="cform-error" role="alert">{fieldErr('message')}</p>}
                 </div>
@@ -199,7 +199,7 @@ export default function Contact() {
                 </Button>
               </form>
             )}
-          </div>
+          </Reveal>
 
         </div>
       </section>

@@ -20,22 +20,14 @@
 
 .donate__card {
   border-top: 4px solid var(--orange);
-  text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 0.9rem;
 }
 
-.donate__icon { font-size: 2.5rem; }
 .donate__card h2,
 .donate__impact h2 { font-size: 1.5rem; }
 .donate__card p { color: var(--text-light); max-width: 520px; }
-
-.donate__contact {
-  color: var(--green-dark);
-  font-weight: 700;
-}
 
 .donate__impact {
   border-left: 4px solid var(--green);
@@ -54,4 +46,38 @@
   border-radius: var(--radius-sm);
   color: var(--text);
   font-weight: 600;
+}
+
+.donate__placeholder {
+  margin-top: 1rem;
+  padding: 1rem;
+  color: var(--text-light);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+}
+
+.donate__thanks {
+  text-align: center;
+}
+
+.donate__thanks-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.donate__thanks h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.donate__thanks p { margin: 0.75rem 0 1rem; color: var(--text-light); }
+
+.donate__contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.donate__contact-links a {
+  color: var(--green-dark);
+  font-weight: 700;
 }

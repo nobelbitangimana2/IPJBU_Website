@@ -1,3 +1,16 @@
+.news-page .page-hero {
+  background: var(--basil);
+}
+
+.news-page .page-hero::before {
+  display: none;
+}
+
+.news-page .page-hero__label,
+.news-page .page-hero__sub {
+  color: var(--cream);
+}
+
 .news__filters {
   display: flex;
   flex-wrap: wrap;
