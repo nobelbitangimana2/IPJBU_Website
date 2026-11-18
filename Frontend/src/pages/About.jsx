@@ -189,31 +189,33 @@ export default function About() {
         </div>
       </section>
 
-      {/* Équipe — affichée uniquement si des membres existent */}
-      {team.length > 0 && (
-        <section className="section section--white">
+      {/* Équipe */}
+      <section className="section section--white">
           <div className="container">
             <div className="section__header">
               <span className="section__label">Les personnes derrière le travail</span>
               <h2 className="section__title">Notre équipe</h2>
             </div>
-            <div className="about__team-grid">
-              {team.map(({ id, name, role, bio, photoUrl }) => (
-                <article key={id} className="about__team-card">
-                  <div className="about__team-photo-wrap">
-                    <img src={photoUrl} alt={name} className="about__team-photo" loading="lazy" />
-                  </div>
-                  <div className="about__team-info">
-                    <h3 className="about__team-name">{name}</h3>
-                    <p className="about__team-role">{role}</p>
-                    {bio && <p className="about__team-bio">{bio}</p>}
-                  </div>
-                </article>
-              ))}
-            </div>
+            {team.length > 0 ? (
+              <div className="about__team-grid">
+                {team.map(({ id, name, role, bio, photoUrl }) => (
+                  <article key={id} className="about__team-card">
+                    <div className="about__team-photo-wrap">
+                      <img src={photoUrl} alt={name} className="about__team-photo" loading="lazy" />
+                    </div>
+                    <div className="about__team-info">
+                      <h3 className="about__team-name">{name}</h3>
+                      <p className="about__team-role">{role}</p>
+                      {bio && <p className="about__team-bio">{bio}</p>}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="about__team-empty">Les membres de notre équipe seront bientôt présentés ici.</p>
+            )}
           </div>
-        </section>
-      )}
+      </section>
 
       {/* Partenaires — affichés uniquement si la liste est non-vide */}
       {(content.partners || []).length > 0 && (

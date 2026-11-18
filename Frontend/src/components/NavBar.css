@@ -207,6 +207,13 @@
 }
 
 /* Language switcher */
+.navbar__languages,
+.navbar__mobile-languages {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .navbar__lang {
   background: rgba(255,255,255,0.12);
   color: var(--white);
@@ -225,6 +232,19 @@
 .navbar__lang:hover {
   background: rgba(255,255,255,0.22);
   border-color: rgba(255,255,255,0.6);
+}
+
+.navbar__lang--active {
+  background: var(--white);
+  border-color: var(--white);
+  box-shadow: 0 0 0 2px rgba(232, 101, 10, 0.45);
+}
+
+.navbar__lang span,
+.navbar__mobile-lang span {
+  display: block;
+  line-height: 1;
+  font-size: 1.05rem;
 }
 
 .navbar__donate {
@@ -354,6 +374,12 @@
 
 .navbar__mobile-lang:hover {
   background: rgba(255,255,255,0.22);
+}
+
+.navbar__mobile-lang--active {
+  background: var(--white);
+  border-color: var(--white);
+  box-shadow: 0 0 0 2px var(--orange);
 }
 
 .navbar__mobile-donate {

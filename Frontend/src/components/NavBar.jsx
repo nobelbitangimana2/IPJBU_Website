@@ -7,7 +7,7 @@ export default function NavBar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropOpen,   setDropOpen]   = useState(false)
   const [scrolled,   setScrolled]   = useState(false)
-  const { lang, toggle: toggleLang, t } = useLang()
+  const { lang, setLanguage, t } = useLang()
   const dropRef  = useRef(null)
   const location = useLocation()
 
@@ -102,15 +102,27 @@ export default function NavBar() {
         </nav>
 
         <div className="navbar__actions">
-          <button
-            className="navbar__lang"
-            onClick={toggleLang}
-            aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
-            title={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
-          >
-            {lang === 'fr' ? 'EN' : 'FR'}
-          </button>
-          <Link to="/contact" className="navbar__donate" onClick={closeAll}>
+          <div className="navbar__languages" role="group" aria-label={lang === 'fr' ? 'Choisir la langue' : 'Choose language'}>
+            <button
+              className={`navbar__lang${lang === 'fr' ? ' navbar__lang--active' : ''}`}
+              onClick={() => setLanguage('fr')}
+              aria-label="Français"
+              aria-pressed={lang === 'fr'}
+              title="Français"
+            >
+              <span aria-hidden="true">🇫🇷</span>
+            </button>
+            <button
+              className={`navbar__lang${lang === 'en' ? ' navbar__lang--active' : ''}`}
+              onClick={() => setLanguage('en')}
+              aria-label="English"
+              aria-pressed={lang === 'en'}
+              title="English"
+            >
+              <span aria-hidden="true">🇬🇧</span>
+            </button>
+          </div>
+          <Link to="/donate" className="navbar__donate" onClick={closeAll}>
             {t('nav.donate')}
           </Link>
         </div>
@@ -145,11 +157,17 @@ export default function NavBar() {
         ))}
 
         <div className="navbar__mobile-bottom">
-          <button className="navbar__mobile-lang" onClick={toggleLang}
-            aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}>
-            {lang === 'fr' ? '🌐 EN' : '🌐 FR'}
-          </button>
-          <Link to="/contact" className="navbar__mobile-donate" onClick={closeAll}>
+          <div className="navbar__mobile-languages" role="group" aria-label={lang === 'fr' ? 'Choisir la langue' : 'Choose language'}>
+            <button className={`navbar__mobile-lang${lang === 'fr' ? ' navbar__mobile-lang--active' : ''}`}
+              onClick={() => setLanguage('fr')} aria-label="Français" aria-pressed={lang === 'fr'}>
+              <span aria-hidden="true">🇫🇷</span>
+            </button>
+            <button className={`navbar__mobile-lang${lang === 'en' ? ' navbar__mobile-lang--active' : ''}`}
+              onClick={() => setLanguage('en')} aria-label="English" aria-pressed={lang === 'en'}>
+              <span aria-hidden="true">🇬🇧</span>
+            </button>
+          </div>
+          <Link to="/donate" className="navbar__mobile-donate" onClick={closeAll}>
             {t('nav.donate')}
           </Link>
         </div>

@@ -65,7 +65,7 @@ export default function Footer() {
               ✉ <a href={`mailto:${contact.email}`}>{contact.email}</a>
             </p>
           )}
-          <Link to="/contact" className="footer__donate">{t('nav.donate')}</Link>
+          <Link to="/donate" className="footer__donate">{t('nav.donate')}</Link>
         </div>
       </div>
 

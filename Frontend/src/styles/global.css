@@ -72,6 +72,29 @@ button { cursor: pointer; font-family: inherit; }
 .main-content {
   flex: 1;
   padding-top: var(--nav-height);
+  animation: page-enter 0.42s ease-out both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-hero,
+.section {
+  animation: section-enter 0.55s ease-out both;
+}
+
+@keyframes section-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .main-content,
+  .page-hero,
+  .section { animation: none; }
 }
 
 .container {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 // ── Public layout & pages ─────────────────────────────────────────────────
 import NavBar          from './components/NavBar'
@@ -14,6 +14,7 @@ import News            from './pages/News'
 import UpdateDetail    from './pages/UpdateDetail'
 import Contact         from './pages/Contact'
 import MentionsLegales from './pages/MentionsLegales'
+import Donate          from './pages/Donate'
 
 // ── Admin ─────────────────────────────────────────────────────────────────
 import AdminLogin       from './admin/AdminLogin'
@@ -28,10 +29,12 @@ import AdminTeam        from './admin/AdminTeam'
 import AdminCategories  from './admin/AdminCategories'
 
 function PublicSite() {
+  const location = useLocation()
+
   return (
     <div className="site-wrapper">
       <NavBar />
-      <main className="main-content">
+      <main className="main-content" key={location.pathname}>
         <Routes>
           <Route path="/"                 element={<Home />}            />
           <Route path="/about"            element={<About />}           />
@@ -44,6 +47,7 @@ function PublicSite() {
           <Route path="/news"             element={<News />}            />
           <Route path="/news/:id"         element={<UpdateDetail />}    />
           <Route path="/contact"          element={<Contact />}         />
+          <Route path="/donate"           element={<Donate />}          />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="*"                 element={<Navigate to="/" replace />} />
         </Routes>

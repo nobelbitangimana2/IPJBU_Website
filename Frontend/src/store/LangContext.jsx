@@ -153,6 +153,12 @@ export function LangProvider({ children }) {
     })
   }
 
+  const setLanguage = (nextLang) => {
+    if (nextLang !== 'fr' && nextLang !== 'en') return
+    setLang(nextLang)
+    localStorage.setItem('ipjbu-lang', nextLang)
+  }
+
   // Keep <html lang="…"> in sync
   useEffect(() => {
     document.documentElement.lang = lang
@@ -166,7 +172,7 @@ export function LangProvider({ children }) {
   }
 
   return (
-    <LangContext.Provider value={{ lang, toggle, t }}>
+    <LangContext.Provider value={{ lang, toggle, setLanguage, t }}>
       {children}
     </LangContext.Provider>
   )
