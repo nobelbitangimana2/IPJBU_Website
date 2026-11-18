@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { useLang } from '../store/LangContext'
+import Reveal from './Reveal'
 import './ImageGrid.css'
 
 /**
@@ -9,6 +11,7 @@ import './ImageGrid.css'
  *   limit    – max images to show (undefined = all)
  */
 export default function ImageGrid({ images = [], columns = 3, limit }) {
+  const { t } = useLang()
   const [lightbox, setLightbox] = useState(null) // { url, alt }
   const displayed = limit ? images.slice(0, limit) : images
 
@@ -25,14 +28,14 @@ export default function ImageGrid({ images = [], columns = 3, limit }) {
         className="img-grid"
         style={{ '--img-grid-cols': columns }}
         role="list"
-        aria-label="Photo gallery"
+        aria-label={t('gallery.aria')}
       >
-        {displayed.map((img) => (
+        {displayed.map((img, index) => (
+          <Reveal key={img.id} delay={(index % columns) * 55}>
           <button
-            key={img.id}
             className="img-grid__item"
             onClick={() => open(img)}
-            aria-label={`View photo: ${img.alt || img.category || 'image'}`}
+            aria-label={t('gallery.view', { photo: img.alt || img.category || 'image' })}
             role="listitem"
           >
             <img
@@ -42,6 +45,7 @@ export default function ImageGrid({ images = [], columns = 3, limit }) {
               loading="lazy"
             />
           </button>
+          </Reveal>
         ))}
       </div>
 
@@ -51,12 +55,12 @@ export default function ImageGrid({ images = [], columns = 3, limit }) {
           className="lightbox"
           role="dialog"
           aria-modal="true"
-          aria-label="Photo viewer"
+          aria-label={t('gallery.viewer')}
           onClick={close}
           onKeyDown={handleKey}
           tabIndex={-1}
         >
-          <button className="lightbox__close" onClick={close} aria-label="Close photo viewer">
+          <button className="lightbox__close" onClick={close} aria-label={t('gallery.close')}>
             ✕
           </button>
           <img

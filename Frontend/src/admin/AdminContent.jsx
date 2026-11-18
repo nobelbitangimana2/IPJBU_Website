@@ -8,6 +8,7 @@ export default function AdminContent() {
   const [mission, setMission] = useState(content.mission)
   const [vision,  setVision]  = useState(content.vision)
   const [partners, setPartners] = useState(content.partners || [])
+  const [donationMethods, setDonationMethods] = useState(content.donationMethods || [])
   const [errors,  setErrors]  = useState({})
   const [toast,   setToast]   = useState(null)
   const [dirty,   setDirty]   = useState(false)
@@ -18,8 +19,9 @@ export default function AdminContent() {
     setMission(content.mission)
     setVision(content.vision)
     setPartners(content.partners || [])
+    setDonationMethods(content.donationMethods || [])
     setDirty(false)
-  }, [content.mission, content.vision, content.partners])
+  }, [content.mission, content.vision, content.partners, content.donationMethods])
 
   function handleChange(field, value) {
     if (field === 'mission') { setMission(value) }
@@ -39,7 +41,7 @@ export default function AdminContent() {
   function handleSave() {
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
-    saveContent({ mission, vision, partners: partners.map((partner) => ({
+    saveContent({ mission, vision, donationMethods: donationMethods.filter((method) => method.trim()), partners: partners.map((partner) => ({
       name: partner.name.trim(), logoUrl: partner.logoUrl.trim(), websiteUrl: partner.websiteUrl.trim(),
     })) })
       .then(() => {
@@ -57,6 +59,7 @@ export default function AdminContent() {
     setMission(content.mission)
     setVision(content.vision)
     setPartners(content.partners || [])
+    setDonationMethods(content.donationMethods || [])
     setErrors({})
     setDirty(false)
   }
@@ -198,6 +201,33 @@ export default function AdminContent() {
           <button type="button" className="adm-btn adm-btn--ghost adm-content__add-partner" onClick={addPartner}>
             + Ajouter un partenaire
           </button>
+        </div>
+
+        <div className="adm-card adm-form">
+          <div className="adm-content__field-header">
+            <span className="adm-content__icon" aria-hidden="true">♥</span>
+            <div>
+              <h2 className="adm-content__field-title">Modes de don</h2>
+              <p className="adm-content__field-hint">
+                Ajoutez les modalités de don à afficher sur la page Faire un don, une par ligne.
+                N'ajoutez que des coordonnées vérifiées par l'association.
+              </p>
+            </div>
+          </div>
+          <div className="adm-field">
+            <label htmlFor="content-donation-methods" className="adm-label">Modalités de don</label>
+            <textarea
+              id="content-donation-methods"
+              className="adm-textarea"
+              rows={5}
+              value={donationMethods.join('\n')}
+              onChange={(event) => {
+                setDonationMethods(event.target.value.split('\n'))
+                setDirty(true)
+              }}
+              placeholder="Exemple : Contactez l'association pour organiser un don en nature."
+            />
+          </div>
         </div>
 
         <div className="adm-content__partners-list">

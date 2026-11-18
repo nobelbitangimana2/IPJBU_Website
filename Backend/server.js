@@ -14,6 +14,7 @@ const contactRoutes  = require('./routes/contact')
 const productsRoutes = require('./routes/products')
 const teamRoutes     = require('./routes/team')
 const categoriesRoutes = require('./routes/categories')
+const opportunitiesRoutes = require('./routes/opportunities')
 const Category       = require('./models/Category')
 const Update         = require('./models/Update')
 
@@ -66,6 +67,7 @@ app.use('/api',         contactRoutes)  // GET /api/contact + /api/admin/contact
 app.use('/api',         productsRoutes) // GET /api/products + /api/admin/products
 app.use('/api',         teamRoutes)     // GET /api/team + /api/admin/team
 app.use('/api',         categoriesRoutes) // GET /api/categories + /api/admin/categories
+app.use('/api',         opportunitiesRoutes) // GET /api/opportunities + /api/admin/opportunities
 
 // ── Health check ───────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))

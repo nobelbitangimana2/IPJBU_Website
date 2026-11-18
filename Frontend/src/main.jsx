@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './store/AuthContext'
 import { DataProvider } from './store/DataContext'
 import { LangProvider } from './store/LangContext'
+import './i18n'
 import App from './App'
 import './styles/global.css'
 

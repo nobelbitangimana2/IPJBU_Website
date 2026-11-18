@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
 import { useLang } from '../store/LangContext'
+import LanguageSwitcher from './LanguageSwitcher'
 import './NavBar.css'
 
 export default function NavBar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropOpen,   setDropOpen]   = useState(false)
   const [scrolled,   setScrolled]   = useState(false)
-  const { lang, setLanguage, t } = useLang()
+  const { t } = useLang()
   const dropRef  = useRef(null)
   const location = useLocation()
 
@@ -57,15 +58,15 @@ export default function NavBar() {
       <div className="navbar__inner container">
 
         <Link to="/" className="navbar__logo" onClick={closeAll}
-          aria-label="IPJBU – DUHINDURINGENDO — accueil">
-          <img src="/IpjbuLogo.jpg" alt="Logo IPJBU – DUHINDURINGENDO" className="navbar__logo-img" />
+          aria-label={t('brand.logoLabel')}>
+          <img src="/IpjbuLogo.jpg" alt={t('brand.logoAlt')} className="navbar__logo-img" />
           <span className="navbar__logo-text">
             <span className="navbar__logo-short">IPJBU</span>
             <span className="navbar__logo-full">IPJBU&nbsp;–&nbsp;DUHINDURINGENDO</span>
           </span>
         </Link>
 
-        <nav className="navbar__links" aria-label={lang === 'fr' ? 'Navigation principale' : 'Main navigation'}>
+        <nav className="navbar__links" aria-label={t('nav.mainAria')}>
           {TOP_LINKS.map(({ to, label, end }) => (
             <NavLink key={to} to={to} end={end}
               className={({ isActive }) => 'navbar__link' + (isActive ? ' navbar__link--active' : '')}>
@@ -102,26 +103,7 @@ export default function NavBar() {
         </nav>
 
         <div className="navbar__actions">
-          <div className="navbar__languages" role="group" aria-label={lang === 'fr' ? 'Choisir la langue' : 'Choose language'}>
-            <button
-              className={`navbar__lang${lang === 'fr' ? ' navbar__lang--active' : ''}`}
-              onClick={() => setLanguage('fr')}
-              aria-label="Français"
-              aria-pressed={lang === 'fr'}
-              title="Français"
-            >
-              <span aria-hidden="true">🇫🇷</span>
-            </button>
-            <button
-              className={`navbar__lang${lang === 'en' ? ' navbar__lang--active' : ''}`}
-              onClick={() => setLanguage('en')}
-              aria-label="English"
-              aria-pressed={lang === 'en'}
-              title="English"
-            >
-              <span aria-hidden="true">🇬🇧</span>
-            </button>
-          </div>
+          <LanguageSwitcher />
           <Link to="/donate" className="navbar__donate" onClick={closeAll}>
             {t('nav.donate')}
           </Link>
@@ -130,7 +112,7 @@ export default function NavBar() {
         <button
           className={`navbar__hamburger${mobileOpen ? ' navbar__hamburger--open' : ''}`}
           onClick={() => setMobileOpen(o => !o)}
-          aria-label={mobileOpen ? (lang === 'fr' ? 'Fermer le menu' : 'Close menu') : (lang === 'fr' ? 'Ouvrir le menu' : 'Open menu')}
+          aria-label={mobileOpen ? t('nav.close') : t('nav.open')}
           aria-expanded={mobileOpen}
           aria-controls="mobile-menu"
         >
@@ -144,6 +126,7 @@ export default function NavBar() {
         {TOP_LINKS.map(({ to, label, end }) => (
           <NavLink key={to} to={to} end={end}
             className={({ isActive }) => 'navbar__mobile-link' + (isActive ? ' navbar__mobile-link--active' : '')}
+            tabIndex={mobileOpen ? undefined : -1}
             onClick={closeAll}>{label}</NavLink>
         ))}
 
@@ -153,21 +136,13 @@ export default function NavBar() {
           <NavLink key={to} to={to}
             className={({ isActive }) =>
               'navbar__mobile-link navbar__mobile-link--sub' + (isActive ? ' navbar__mobile-link--active' : '')}
+            tabIndex={mobileOpen ? undefined : -1}
             onClick={closeAll}>{label}</NavLink>
         ))}
 
         <div className="navbar__mobile-bottom">
-          <div className="navbar__mobile-languages" role="group" aria-label={lang === 'fr' ? 'Choisir la langue' : 'Choose language'}>
-            <button className={`navbar__mobile-lang${lang === 'fr' ? ' navbar__mobile-lang--active' : ''}`}
-              onClick={() => setLanguage('fr')} aria-label="Français" aria-pressed={lang === 'fr'}>
-              <span aria-hidden="true">🇫🇷</span>
-            </button>
-            <button className={`navbar__mobile-lang${lang === 'en' ? ' navbar__mobile-lang--active' : ''}`}
-              onClick={() => setLanguage('en')} aria-label="English" aria-pressed={lang === 'en'}>
-              <span aria-hidden="true">🇬🇧</span>
-            </button>
-          </div>
-          <Link to="/donate" className="navbar__mobile-donate" onClick={closeAll}>
+          <LanguageSwitcher mobile disabled={!mobileOpen} />
+          <Link to="/donate" className="navbar__mobile-donate" tabIndex={mobileOpen ? undefined : -1} onClick={closeAll}>
             {t('nav.donate')}
           </Link>
         </div>

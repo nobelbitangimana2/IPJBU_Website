@@ -17,6 +17,7 @@
 }
 
 .img-grid__item {
+  width: 100%;
   background: none;
   border: none;
   padding: 0;

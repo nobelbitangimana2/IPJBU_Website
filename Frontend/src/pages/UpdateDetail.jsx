@@ -3,11 +3,14 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 import api from '../services/api'
 import { useData } from '../store/DataContext'
+import { useLang } from '../store/LangContext'
+import Reveal from '../components/Reveal'
 import './UpdateDetail.css'
 
 export default function UpdateDetail() {
   const { id }     = useParams()
   const navigate   = useNavigate()
+  const { t, lang } = useLang()
   const { updates, contact } = useData()
 
   const [update,  setUpdate]  = useState(null)
@@ -71,12 +74,12 @@ export default function UpdateDetail() {
         input.select()
         const copied = document.execCommand('copy')
         input.remove()
-        if (!copied) throw new Error('Copie non disponible dans ce navigateur.')
+        if (!copied) throw new Error(t('newsDetail.copyUnavailable'))
       }
-      setShareMessage('Lien copié')
+      setShareMessage(t('newsDetail.copied'))
       setTimeout(() => setShareMessage(''), 2500)
     } catch (err) {
-      setShareMessage(err.message || 'Impossible de copier le lien.')
+      setShareMessage(err.message || t('newsDetail.copyFailed'))
     }
   }
 
@@ -84,7 +87,7 @@ export default function UpdateDetail() {
     try {
       await navigator.share({ title: update.title, text: update.excerpt, url: shareUrl })
     } catch (err) {
-      if (err.name !== 'AbortError') setShareMessage('Le partage a échoué.')
+      if (err.name !== 'AbortError') setShareMessage(t('newsDetail.shareFailed'))
     }
   }
 
@@ -120,7 +123,7 @@ export default function UpdateDetail() {
     return (
       <div className="ud__loading container" aria-live="polite">
         <div className="ud__spinner" aria-hidden="true" />
-        Chargement de l'article…
+        {t('newsDetail.loading')}
       </div>
     )
   }
@@ -128,13 +131,13 @@ export default function UpdateDetail() {
     return (
       <div className="ud__loading container">
         <p>{error}</p>
-        <Button to="/news" variant="outline" className="mt-2">← Retour aux actualités</Button>
+        <Button to="/news" variant="outline" className="mt-2">{t('newsDetail.back')}</Button>
       </div>
     )
   }
   if (!update) return null
 
-  const formatted = new Date(update.date).toLocaleDateString('fr-FR', {
+  const formatted = new Date(update.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
   })
 
@@ -152,8 +155,8 @@ export default function UpdateDetail() {
 
       <div className="container ud__body-wrap">
         <div className="ud__body">
-          <nav aria-label="Fil d'Ariane" className="ud__breadcrumb">
-            <Link to="/news">← Retour aux actualités</Link>
+          <nav aria-label={t('newsDetail.breadcrumb')} className="ud__breadcrumb">
+            <Link to="/news">{t('newsDetail.back')}</Link>
           </nav>
           <div className="ud__text">
             {update.blocks?.length
@@ -171,37 +174,37 @@ export default function UpdateDetail() {
               })
               : (update.body || '').split('\n\n').map((para, i) => <p key={i}>{para}</p>)}
           </div>
-          <section className="ud__share" aria-label="Partager cet article">
-            <h2 className="ud__share-title">Partager</h2>
+          <section className="ud__share" aria-label={t('newsDetail.share')}>
+            <h2 className="ud__share-title">{t('newsDetail.share')}</h2>
             <div className="ud__share-links">
               <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">Facebook</a>
               <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`${update.title} ${shareUrl}`)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
               <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(update.title)}&url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">X / Twitter</a>
               <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <button type="button" onClick={copyLink}>Copier le lien</button>
+              <button type="button" onClick={copyLink}>{t('newsDetail.copy')}</button>
               {typeof navigator !== 'undefined' && navigator.share && (
-                <button type="button" onClick={nativeShare}>Partager…</button>
+                <button type="button" onClick={nativeShare}>{t('newsDetail.share')}</button>
               )}
             </div>
             {shareMessage && <p className="ud__share-message" role="status">{shareMessage}</p>}
             {contact?.socialLinks?.facebook && (
               <a className="ud__facebook-follow" href={contact.socialLinks.facebook} target="_blank" rel="noopener noreferrer">
-                Suivez-nous sur Facebook
+                {t('newsDetail.followFacebook')}
               </a>
             )}
           </section>
           <div className="ud__actions">
-            <Button to="/news" variant="outline">← Toutes les actualités</Button>
-            <Button to="/contact">Nous contacter</Button>
+            <Button to="/news" variant="outline">{t('newsDetail.allNews')}</Button>
+            <Button to="/contact">{t('contactus')}</Button>
           </div>
         </div>
 
         {related.length > 0 && (
-          <aside className="ud__related" aria-label="Related updates">
-            <h2 className="ud__related-heading">Plus d'actualités</h2>
+          <aside className="ud__related" aria-label={t('newsDetail.related')}>
+            <Reveal as="h2" className="ud__related-heading">{t('newsDetail.related')}</Reveal>
             <div className="ud__related-list">
               {related.map((r) => {
-                const relDate = new Date(r.date).toLocaleDateString('fr-FR', {
+                const relDate = new Date(r.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
                   day: 'numeric', month: 'short', year: 'numeric',
                 })
                 return (

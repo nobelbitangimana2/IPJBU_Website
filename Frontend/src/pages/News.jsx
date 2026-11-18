@@ -2,12 +2,13 @@ import React, { useState } from 'react'
 import UpdateCard from '../components/UpdateCard'
 import { useData } from '../store/DataContext'
 import { useLang } from '../store/LangContext'
+import Reveal from '../components/Reveal'
 import './News.css'
 
 export default function News() {
   const { updates, categories } = useData()
-  const { t, lang } = useLang()
-  const all = lang === 'fr' ? 'Tous' : 'All'
+  const { t } = useLang()
+  const all = t('news.filter.all')
   const [filter, setFilter] = useState(all)
 
   // Reset filter label when language changes
@@ -31,8 +32,7 @@ export default function News() {
 
       <section className="section section--white">
         <div className="container">
-          <div className="news__filters" role="group"
-            aria-label={lang === 'fr' ? 'Filtrer par catégorie' : 'Filter by category'}>
+          <Reveal className="news__filters" role="group" aria-label={t('news.filter.aria')}>
             {[{ slug: all, name: all }, ...categories].map(({ slug, name }) => (
               <button
                 key={slug}
@@ -43,7 +43,7 @@ export default function News() {
                 {name}
               </button>
             ))}
-          </div>
+          </Reveal>
 
           {updates.length === 0 ? (
             <p className="news__loading">{t('news.loading')}</p>

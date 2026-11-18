@@ -17,6 +17,10 @@ const siteContentSchema = new mongoose.Schema(
       type: [mongoose.Schema.Types.Mixed],
       default: [],
     },
+    donationMethods: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 )

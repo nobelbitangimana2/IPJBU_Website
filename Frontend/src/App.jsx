@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 // ── Public layout & pages ─────────────────────────────────────────────────
@@ -27,14 +27,20 @@ import AdminContent     from './admin/AdminContent'
 import AdminContactInfo from './admin/AdminContactInfo'
 import AdminTeam        from './admin/AdminTeam'
 import AdminCategories  from './admin/AdminCategories'
+import AdminOpportunities from './admin/AdminOpportunities'
 
 function PublicSite() {
   const location = useLocation()
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname])
+
   return (
     <div className="site-wrapper">
       <NavBar />
-      <main className="main-content" key={location.pathname}>
+      <main className="main-content">
+       <div key={location.pathname} className="page-enter">
         <Routes>
           <Route path="/"                 element={<Home />}            />
           <Route path="/about"            element={<About />}           />
@@ -43,6 +49,7 @@ function PublicSite() {
           <Route path="/activities"       element={<Navigate to="/programmes" replace />} />
           <Route path="/partners"         element={<Partners />}        />
           <Route path="/opportunities"    element={<Opportunities />}   />
+          <Route path="/opportunites"     element={<Opportunities />}   />
           <Route path="/gallery"          element={<Gallery />}         />
           <Route path="/news"             element={<News />}            />
           <Route path="/news/:id"         element={<UpdateDetail />}    />
@@ -51,6 +58,7 @@ function PublicSite() {
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="*"                 element={<Navigate to="/" replace />} />
         </Routes>
+       </div>
       </main>
       <Footer />
     </div>
@@ -76,6 +84,7 @@ export default function App() {
         <Route path="media"      element={<AdminMedia />}       />
         <Route path="updates"    element={<AdminUpdates />}     />
         <Route path="categories" element={<AdminCategories />}  />
+        <Route path="opportunities" element={<AdminOpportunities />} />
         <Route path="content"    element={<AdminContent />}     />
         <Route path="contact"    element={<AdminContactInfo />} />
         <Route path="team"       element={<AdminTeam />}        />

@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useLang } from '../store/LangContext'
+import Reveal from './Reveal'
 import './UpdateCard.css'
 
 /**
@@ -9,12 +11,13 @@ import './UpdateCard.css'
  * dark=false → standard bordered card
  */
 export default function UpdateCard({ id, title, date, excerpt, imageUrl, category, dark = false }) {
-  const formatted = new Date(date).toLocaleDateString('en-GB', {
+  const { lang, t } = useLang()
+  const formatted = new Date(date).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
   })
 
   return (
-    <article className={`ucard${dark ? ' ucard--dark' : ''}`}>
+    <Reveal as="article" className={`ucard${dark ? ' ucard--dark' : ''}`}>
       <Link to={`/news/${id}`} className="ucard__img-link" tabIndex="-1" aria-hidden="true">
         <div className="ucard__img-wrap">
           <img src={imageUrl} alt={title} className="ucard__img" loading="lazy" />
@@ -27,10 +30,10 @@ export default function UpdateCard({ id, title, date, excerpt, imageUrl, categor
           <Link to={`/news/${id}`} className="ucard__title-link">{title}</Link>
         </h3>
         <p className="ucard__excerpt">{excerpt}</p>
-        <Link to={`/news/${id}`} className="ucard__more" aria-label={`Read more: ${title}`}>
-          Read more →
+        <Link to={`/news/${id}`} className="ucard__more" aria-label={`${t('news.readMore')}: ${title}`}>
+          {t('news.readMore')} →
         </Link>
       </div>
-    </article>
+    </Reveal>
   )
 }

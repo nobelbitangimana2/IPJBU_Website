@@ -20,6 +20,8 @@
   --green:       #2E9E45;   /* vert vif du cercle   */
   --green-mid:   #3DB558;   /* hover / accents      */
   --green-light: #D6F0DB;   /* teinte très douce    */
+  --basil:       #3f6b3a;
+  --basil-dark:  #2f5230;
   --cream:       #FFF8EF;   /* fond alterné chaud   */
   --orange:      #E8650A;   /* anneau orange logo   */
   --orange-dark: #B84D00;   /* hover / texte orange */
@@ -46,7 +48,11 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
 
 body {
@@ -72,29 +78,6 @@ button { cursor: pointer; font-family: inherit; }
 .main-content {
   flex: 1;
   padding-top: var(--nav-height);
-  animation: page-enter 0.42s ease-out both;
-}
-
-@keyframes page-enter {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.page-hero,
-.section {
-  animation: section-enter 0.55s ease-out both;
-}
-
-@keyframes section-enter {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .main-content,
-  .page-hero,
-  .section { animation: none; }
 }
 
 .container {
@@ -111,6 +94,7 @@ button { cursor: pointer; font-family: inherit; }
 
 .section--cream { background: var(--cream); }
 .section--green { background: var(--green-dark); color: var(--white); }
+.section--basil { background: var(--basil); color: var(--white); }
 .section--white { background: var(--white); }
 
 .section__header {
@@ -129,6 +113,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 .section--green .section__label { color: rgba(255,255,255,0.65); }
+.section--basil .section__label { color: var(--white); }
 
 .section__title {
   font-size: clamp(1.75rem, 4vw, 2.6rem);
@@ -139,6 +124,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 .section--green .section__title { color: var(--white); }
+.section--basil .section__title { color: var(--white); }
 
 .section__subtitle {
   margin-top: 0.9rem;
@@ -151,6 +137,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 .section--green .section__subtitle { color: rgba(255,255,255,0.75); }
+.section--basil .section__subtitle { color: var(--cream); }
 
 /* ── Card base ── */
 .card {

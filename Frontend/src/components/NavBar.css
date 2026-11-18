@@ -220,8 +220,12 @@
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  padding: 0.3rem 0.65rem;
-  border-radius: var(--radius-pill);
+  display: inline-grid;
+  width: 38px;
+  height: 30px;
+  place-items: center;
+  padding: 0.2rem;
+  border-radius: 8px;
   border: 1.5px solid rgba(255,255,255,0.3);
   cursor: pointer;
   font-family: inherit;
@@ -234,17 +238,25 @@
   border-color: rgba(255,255,255,0.6);
 }
 
+.navbar__lang:focus-visible,
+.navbar__mobile-lang:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+}
+
 .navbar__lang--active {
   background: var(--white);
   border-color: var(--white);
   box-shadow: 0 0 0 2px rgba(232, 101, 10, 0.45);
 }
 
-.navbar__lang span,
-.navbar__mobile-lang span {
+.navbar__lang svg,
+.navbar__mobile-lang svg {
   display: block;
-  line-height: 1;
-  font-size: 1.05rem;
+  width: 24px;
+  height: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  border-radius: 3px;
 }
 
 .navbar__donate {
@@ -362,8 +374,12 @@
   color: var(--white);
   font-size: 0.78rem;
   font-weight: 800;
-  padding: 0.55rem 0.9rem;
-  border-radius: var(--radius-pill);
+  display: inline-grid;
+  width: 40px;
+  height: 32px;
+  place-items: center;
+  padding: 0.2rem;
+  border-radius: 8px;
   border: 1.5px solid rgba(255,255,255,0.3);
   cursor: pointer;
   font-family: inherit;
